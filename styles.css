@@ -1,0 +1,426 @@
+:root {
+  --primary-color: #2a393a;
+  --border-size: 1.5px;
+  --self-service-color: #a1eeff;
+  --integrated-color: #c7ff6b;
+  --comming-color: #eaf1f0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(#1c4a3f 0vh, #1c4a3f 50vh, white 50vh);
+  background-attachment: fixed;
+}
+
+h1 {
+  text-align: center;
+  font-weight: 500;
+  color: white;
+  font-size: 3.6rem;
+  padding-top: 110px;
+  letter-spacing: -0.05rem;
+  line-height: 4rem;
+  width: 70%;
+  height: 165px;
+  margin: 0 auto;
+}
+
+.pricing-table {
+  width: 83.5vw;
+  margin: 200px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: center;
+  gap: 16px;
+}
+
+.service {
+  border: var(--border-size) solid var(--primary-color);
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.services {
+  width: 83.5vw;
+  grid-column: 1 / span 3;
+  border: var(--border-size) solid var(--primary-color);
+}
+
+.service h2 {
+  color: var(--primary-color);
+  width: 100%;
+  text-align: center;
+  border-bottom: var(--border-size) solid var(--primary-color);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding-top: 14px;
+  padding-bottom: 12px;
+}
+
+.card-img {
+  height: 46vh;
+  padding-top: 35px;
+}
+.messaging {
+  /* margin-top: 43px; */
+  height: 43.5vh;
+}
+.video {
+  /* margin-top: 28px; */
+  height: 23.5vh;
+}
+.agent {
+  /* margin-top: 25px; */
+  height: 23.5vh;
+}
+.booking,
+.ask-question {
+  /* margin-top: 50px; */
+  height: 50vh;
+}
+
+.card-points {
+  border-top: var(--border-size) solid var(--primary-color);
+  width: 88%;
+}
+
+.card-points h3 {
+  background-color: var(--primary-color);
+  color: white;
+  width: fit-content;
+  padding: 10px 19px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02rem;
+}
+
+.card-points ul {
+  padding-top: 17px;
+  color: var(--primary-color);
+  list-style-type: none;
+  /* list-style-position: inside;
+    list-style-image: url('check-list.png'); */
+}
+
+.card-points ul li {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.card-points ul li::before {
+  content: url("check-list.png");
+  /* content: '\2714'; */
+}
+
+.comming .card-points ul li::before {
+  content: url("plus-icon.png");
+}
+
+.booking {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.description {
+  padding-top: 10%;
+  width: 83%;
+}
+
+.description h3 {
+  font-weight: 500;
+  font-size: 3rem;
+  margin-bottom: 13px;
+}
+
+.description p {
+  font-size: 1.08rem;
+  margin-bottom: 7px;
+}
+
+.description p:last-child {
+  margin-top: 18px;
+  font-size: 0.8rem;
+}
+
+.booking-btn {
+  margin-top: 10px;
+  background-color: #1c4a3f;
+  border: var(--border-size) solid var(--primary-color);
+  padding-top: 15px;
+  padding-bottom: 15px;
+  width: 83%;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.ask-question {
+  background: linear-gradient(
+    to top,
+    var(--comming-color) 0vh,
+    var(--comming-color) 19vh,
+    white 20vh
+  );
+  padding-left: 31px;
+  padding-top: 200px;
+  width: 100%;
+  display: flex;
+  gap: 95px;
+}
+
+.ask-question img {
+  align-self: flex-start;
+}
+
+.services {
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 5.3% 8.2%;
+  column-gap: 250px;
+}
+
+.ask-btn {
+  background: none;
+  border: none;
+  border-bottom: var(--border-size) solid white;
+  padding-bottom: 12px;
+  color: white;
+  font-size: 1rem;
+  letter-spacing: 0.07rem;
+  height: 3vh;
+  box-sizing: content-box;
+}
+.ask-btn span {
+  background-color: #8af135;
+  color: var(--primary-color);
+  padding: 1px;
+}
+
+.ask-question .ask-btn {
+  padding-top: 45px;
+  color: var(--primary-color);
+  border-bottom: var(--border-size) solid var(--primary-color);
+}
+
+.services-text {
+  width: 35%;
+  padding-left: 12px;
+  align-self: flex-start;
+  padding-top: 42px;
+}
+
+.services-text h2 {
+  font-size: 2.6rem;
+  font-weight: 500;
+}
+.services-text p {
+  padding-top: 13px;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.03rem;
+  line-height: 1.7rem;
+}
+
+.services-text .ask-btn {
+  margin-top: 35px;
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  h1 {
+    font-size: 2rem;
+    line-height: 3rem;
+    width: 80%;
+  }
+
+  .pricing-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .service {
+    width: 75vw;
+  }
+
+  .services {
+    width: 75vw;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .services-text {
+    width: 80%;
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+
+  .service {
+    width: 60vw;
+  }
+
+  .booking {
+    height: 55vh;
+  }
+
+  .services {
+    width: 80vw;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  html {
+    font-size: 20px;
+  }
+
+  .service {
+    width: 50vw;
+  }
+
+  .booking {
+    height: 60vh;
+  }
+
+  .services-text {
+    width: 80%;
+  }
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .html {
+    font-size: 16px;
+  }
+
+  .pricing-table {
+    width: 83.5vw;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+  }
+
+  .service {
+    width: 30vw;
+  }
+
+  .booking {
+    height: 50vh;
+  }
+
+  .description h3 {
+    font-size: 2.3rem;
+  }
+
+  .booking-btn {
+    margin-top: 5px;
+  }
+  .services {
+    width: 100%;
+    grid-column: 1 / span 3;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 20px;
+  }
+
+  .services-text h2 {
+    font-size: 2rem;
+  }
+  .services-text p {
+    font-size: 0.9rem;
+  }
+
+  .ask-question {
+    gap: 60px;
+  }
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {
+  html {
+    font-size: 16px;
+  }
+  h1 {
+    font-size: 3.6rem;
+    line-height: 4rem;
+    width: 70%;
+  }
+
+  .pricing-table {
+    width: 83.5vw;
+  }
+
+  .service {
+    width: 100%;
+  }
+  .booking {
+    height: 50vh;
+  }
+
+  /* sua nhaaa */
+  .description h3 {
+    font-size: 3rem;
+  }
+
+  .booking-btn {
+    margin-top: 10px;
+  }
+  .services {
+    padding: 5.3% 8.2%;
+    column-gap: 225px;
+  }
+
+  .services-text {
+    width: 35%;
+  }
+
+  .services-text h2 {
+    font-size: 2.6rem;
+  }
+  .services-text p {
+    font-size: 1rem;
+  }
+
+  .ask-question {
+    gap: 95px;
+  }
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 25px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .card-img {
+    height: 35vh;
+    padding-top: 35px;
+  }
+}
