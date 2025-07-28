@@ -19,12 +19,37 @@ const errors = {
   repassword: "",
 };
 
+const isValid = (errors) => {
+  for (key in errors) {
+    if (errors[key] != "") return false;
+  }
+  return true;
+};
+
+const errorMsg = {
+  noError: " ",
+  username: "Username must not contain special characters",
+  email: "Invalid email format",
+  password: {
+    length: "Password must be at least 8 characters",
+    uppercase: "Password must contain one uppercase letter",
+    lowercase: "Password must contain one lowercase letter",
+    digit: "Password must contain one digit",
+    specialChar: "Password must contain one special characters",
+    space: "Password must not contain spaces",
+  },
+  repassword: "Passwords do not match",
+};
+
 const checkRegex = (regex, str) => {
   return regex.test(str);
 };
 
-const errorMsg = (id) => {
-  return document.getElementById(id);
+const setErrorMsg = (field, msg) => {
+  const errorElm = document.getElementById(`${field}-error-msg`);
+  if (errorElm && msg) {
+    errorElm.textContent = msg;
+  }
 };
 
 const stringTrim = (str) => {
@@ -33,52 +58,63 @@ const stringTrim = (str) => {
 
 usernameInput.addEventListener("input", () => {
   const username = stringTrim(usernameInput.value);
-  errorMsg("username-error-msg").textContent = checkRegex(
-    regexChars.specialChar,
-    username
-  )
-    ? "Username must not contain special characters"
-    : "";
-  if (errorMsg("username-error-msg").textContent == "") delete errors.username;
+  if (!checkRegex(regexChars.specialChar, username)) {
+    setErrorMsg("username", errorMsg.noError);
+    errors.username = "";
+  } else {
+    setErrorMsg("username", errorMsg.username);
+    errors.username = errorMsg.username;
+  }
 });
 
 emailInput.addEventListener("input", () => {
   const email = stringTrim(emailInput.value);
-  errorMsg("email-error-msg").textContent = checkRegex(regexChars.email, email)
-    ? ""
-    : "Invalid email format";
-  if (errorMsg("email-error-msg").textContent == "") delete errors.email;
+  if (checkRegex(regexChars.email, email)) {
+    setErrorMsg("email", errorMsg.noError);
+    errors.email = "";
+  } else {
+    setErrorMsg("email", errorMsg.email);
+    errors.email = errorMsg.email;
+  }
 });
 
 passwordInput.addEventListener("input", () => {
   const password = stringTrim(passwordInput.value);
   const errorsPwd = [];
-  if (password.length < 8)
-    errorsPwd.push("Password must be at least 8 characters");
+  if (password.length < 8) errorsPwd.push(errorMsg.password.length);
   if (!checkRegex(regexChars.uppercase, password))
-    errorsPwd.push("Password must contain one uppercase letter");
+    errorsPwd.push(errorMsg.password.uppercase);
   if (!checkRegex(regexChars.lowercase, password))
-    errorsPwd.push("Password must contain one lowercase letter");
+    errorsPwd.push(errorMsg.password.lowercase);
   if (!checkRegex(regexChars.digit, password))
-    errorsPwd.push("Password must contain one digit");
+    errorsPwd.push(errorMsg.password.digit);
   if (!checkRegex(regexChars.specialChar, password))
-    errorsPwd.push("Password must contain one special characters");
+    errorsPwd.push(errorMsg.password.specialChar);
   if (checkRegex(regexChars.space, password))
-    errorsPwd.push("Password must not contain spaces");
-  errorMsg("password-error-msg").innerHTML =
-    errorsPwd.length > 0 ? errorsPwd.join("<br>") : "";
-  if (errorMsg("password-error-msg").textContent == "") delete errors.password;
+    errorsPwd.push(errorMsg.password.space);
+  if (errorsPwd.length > 0) {
+    setErrorMsg("password", errorsPwd.join(". "));
+    errors.password = errorsPwd.join(". ");
+  } else {
+    setErrorMsg("password", errorMsg.noError);
+    errors.password = "";
+  }
 });
 
 repasswordInput.addEventListener("input", () => {
-  errorMsg("repassword-error-msg").textContent =
-    repasswordInput.value == passwordInput.value ? "" : "Password not match";
-  if (errorMsg("repassword-error-msg").textContent == "")
-    delete errors.repassword;
+  if (repasswordInput.value == passwordInput.value) {
+    setErrorMsg("repassword", errorMsg.noError);
+    errors.repassword = "";
+  } else {
+    setErrorMsg("repassword", errorMsg.repassword);
+    errors.repassword = errorMsg.repassword;
+  }
 });
 
-document.getElementById("register-form").addEventListener("submit", () => {
-  if (Object.keys(errors).length == 0) {
+document.getElementById("register-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  console.log(errors);
+  if (isValid(errors)) {
     const userData = {
       username: usernameInput.value,
       email: emailInput.value,
