@@ -21,13 +21,12 @@ const errors = {
 
 const isValid = (errors) => {
   for (key in errors) {
-    if (errors[key] != "") return false;
+    if (errors[key] !== "") return false;
   }
   return true;
 };
 
 const errorMsg = {
-  noError: " ",
   username: "Username must not contain special characters",
   email: "Invalid email format",
   password: {
@@ -49,17 +48,47 @@ const setErrorMsg = (field, msg) => {
   const errorElm = document.getElementById(`${field}-error-msg`);
   if (errorElm && msg) {
     errorElm.textContent = msg;
+  } else {
+    errorElm.textContent = "";
   }
 };
 
-const stringTrim = (str) => {
+const trimValue = (str) => {
   return str.trim();
 };
 
+const checkPassword = (password) => {
+  if (password.length < 8) {
+    setErrorMsg("password", errorMsg.password.length);
+    return false;
+  }
+  if (!checkRegex(regexChars.uppercase, password)) {
+    setErrorMsg("password", errorMsg.password.uppercase);
+    return false;
+  }
+  if (!checkRegex(regexChars.lowercase, password)) {
+    setErrorMsg("password", errorMsg.password.lowercase);
+    return false;
+  }
+  if (!checkRegex(regexChars.digit, password)) {
+    setErrorMsg("password", errorMsg.password.digit);
+    return false;
+  }
+  if (!checkRegex(regexChars.specialChar, password)) {
+    setErrorMsg("password", errorMsg.password.specialChar);
+    return false;
+  }
+  if (checkRegex(regexChars.space, password)) {
+    setErrorMsg("password", errorMsg.password.space);
+    return false;
+  }
+  return true;
+};
+
 usernameInput.addEventListener("input", () => {
-  const username = stringTrim(usernameInput.value);
+  const username = trimValue(usernameInput.value);
   if (!checkRegex(regexChars.specialChar, username)) {
-    setErrorMsg("username", errorMsg.noError);
+    setErrorMsg("username", "");
     errors.username = "";
   } else {
     setErrorMsg("username", errorMsg.username);
@@ -68,9 +97,9 @@ usernameInput.addEventListener("input", () => {
 });
 
 emailInput.addEventListener("input", () => {
-  const email = stringTrim(emailInput.value);
+  const email = trimValue(emailInput.value);
   if (checkRegex(regexChars.email, email)) {
-    setErrorMsg("email", errorMsg.noError);
+    setErrorMsg("email", "");
     errors.email = "";
   } else {
     setErrorMsg("email", errorMsg.email);
@@ -79,31 +108,16 @@ emailInput.addEventListener("input", () => {
 });
 
 passwordInput.addEventListener("input", () => {
-  const password = stringTrim(passwordInput.value);
-  const errorsPwd = [];
-  if (password.length < 8) errorsPwd.push(errorMsg.password.length);
-  if (!checkRegex(regexChars.uppercase, password))
-    errorsPwd.push(errorMsg.password.uppercase);
-  if (!checkRegex(regexChars.lowercase, password))
-    errorsPwd.push(errorMsg.password.lowercase);
-  if (!checkRegex(regexChars.digit, password))
-    errorsPwd.push(errorMsg.password.digit);
-  if (!checkRegex(regexChars.specialChar, password))
-    errorsPwd.push(errorMsg.password.specialChar);
-  if (checkRegex(regexChars.space, password))
-    errorsPwd.push(errorMsg.password.space);
-  if (errorsPwd.length > 0) {
-    setErrorMsg("password", errorsPwd.join(". "));
-    errors.password = errorsPwd.join(". ");
-  } else {
-    setErrorMsg("password", errorMsg.noError);
+  const password = trimValue(passwordInput.value);
+  if (checkPassword(password)) {
+    setErrorMsg("password", "");
     errors.password = "";
-  }
+  } else errors.password = errorMsg.password;
 });
 
 repasswordInput.addEventListener("input", () => {
-  if (repasswordInput.value == passwordInput.value) {
-    setErrorMsg("repassword", errorMsg.noError);
+  if (repasswordInput.value === passwordInput.value) {
+    setErrorMsg("repassword", "");
     errors.repassword = "";
   } else {
     setErrorMsg("repassword", errorMsg.repassword);
@@ -111,9 +125,7 @@ repasswordInput.addEventListener("input", () => {
   }
 });
 
-document.getElementById("register-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  console.log(errors);
+document.getElementById("register-form").addEventListener("submit", () => {
   if (isValid(errors)) {
     const userData = {
       username: usernameInput.value,
