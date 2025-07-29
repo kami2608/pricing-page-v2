@@ -1,0 +1,21 @@
+
+.add-task input {
+    width: 50%;
+}
+
+.todo-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.todo-table th,
+.todo-table td {
+  border: 1px solid black;
+  padding: 12px;
+  text-align: left;
+}
+
+.todo-table th {
+  background-color: #494545;
+  color: white;
+}
