@@ -19,3 +19,9 @@
   background-color: #494545;
   color: white;
 }
+
+
+.search {
+  display: flex;
+  gap: 20px;
+}

@@ -14,12 +14,10 @@ interface Task {
   updatedAt: string;
 }
 
-var tasks: Task[] = [];
+var tasks: Task[] = JSON.parse(localStorage.getItem("todos") || "[]");
 
 //functions
-function displayTasks() {
-  tasks = JSON.parse(localStorage.getItem("todos") || "[]");
-
+function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
 
   if (todoTable && Array.isArray(tasks)) {
@@ -53,7 +51,7 @@ function getInput(field: string): string {
 }
 
 // main
-displayTasks();
+displayTasks(tasks);
 document.getElementById("add-form")?.addEventListener("submit", () => {
   const title = getInput("title");
   const description = getInput("description");
@@ -66,13 +64,49 @@ document.getElementById("add-form")?.addEventListener("submit", () => {
       createdAt: new Date().toLocaleString("vi-VN"),
       updatedAt: new Date().toLocaleString("vi-VN"),
     };
-    
+
     tasks.push(task);
     localStorage.setItem("todos", JSON.stringify(tasks));
     alert("Added task!");
     (document.getElementById("add-form") as HTMLFormElement)?.reset();
-    displayTasks();
+    displayTasks(tasks);
   } else {
     alert("Please fill in the title and description");
   }
+});
+
+function checkIncludes(str: string, searchStr: string): boolean {
+  const tmpStr = str.toLowerCase();
+  const tmpSearchStr = searchStr.toLowerCase();
+  const len = str.length;
+
+  if (searchStr.length === 0) return true;
+  if (searchStr.length > len) return false;
+
+  for (let i = 0; i <= len - searchStr.length; i++) {
+    if (tmpStr.substring(i, i + searchStr.length) === tmpSearchStr) {
+      return true;
+    }
+  }
+  return false;
+}
+
+document.getElementById("title-filter")?.addEventListener("input", () => {
+  const title = getInput("title-filter");
+  const status = getInput("status-filter");
+  const filteredTasks = tasks.filter(
+    (task) =>
+      checkIncludes(task.title, title) && task.status.toLowerCase() === status
+  );
+  displayTasks(filteredTasks);
+});
+
+document.getElementById("status-filter")?.addEventListener("input", () => {
+  const title = getInput("title-filter");
+  const status = getInput("status-filter");
+  const filteredTasks = tasks.filter(
+    (task) =>
+      checkIncludes(task.title, title) && task.status.toLowerCase() === status
+  );
+  displayTasks(filteredTasks);
 });

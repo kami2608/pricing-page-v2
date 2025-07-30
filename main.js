@@ -1,4 +1,4 @@
-var _a;
+var _a, _b, _c;
 // variables, enums, interfaces
 var Status;
 (function (Status) {
@@ -6,10 +6,9 @@ var Status;
     Status["PROGRESS"] = "PROGRESS";
     Status["DONE"] = "DONE";
 })(Status || (Status = {}));
-var tasks = [];
+var tasks = JSON.parse(localStorage.getItem("todos") || "[]");
 //functions
-function displayTasks() {
-    tasks = JSON.parse(localStorage.getItem("todos") || "[]");
+function displayTasks(tasks) {
     var todoTable = document.getElementById("todolist");
     if (todoTable && Array.isArray(tasks)) {
         var rows_1 = "";
@@ -34,7 +33,7 @@ function getInput(field) {
         return "";
 }
 // main
-displayTasks();
+displayTasks(tasks);
 (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", function () {
     var _a;
     var title = getInput("title");
@@ -52,9 +51,40 @@ displayTasks();
         localStorage.setItem("todos", JSON.stringify(tasks));
         alert("Added task!");
         (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.reset();
-        displayTasks();
+        displayTasks(tasks);
     }
     else {
         alert("Please fill in the title and description");
     }
+});
+function checkIncludes(str, searchStr) {
+    var tmpStr = str.toLowerCase();
+    var tmpSearchStr = searchStr.toLowerCase();
+    var len = str.length;
+    if (searchStr.length === 0)
+        return true;
+    if (searchStr.length > len)
+        return false;
+    for (var i = 0; i <= len - searchStr.length; i++) {
+        if (tmpStr.substring(i, i + searchStr.length) === tmpSearchStr) {
+            return true;
+        }
+    }
+    return false;
+}
+(_b = document.getElementById("title-filter")) === null || _b === void 0 ? void 0 : _b.addEventListener("input", function () {
+    var title = getInput("title-filter");
+    var status = getInput("status-filter");
+    var filteredTasks = tasks.filter(function (task) {
+        return checkIncludes(task.title, title) && task.status.toLowerCase() === status;
+    });
+    displayTasks(filteredTasks);
+});
+(_c = document.getElementById("status-filter")) === null || _c === void 0 ? void 0 : _c.addEventListener("input", function () {
+    var title = getInput("title-filter");
+    var status = getInput("status-filter");
+    var filteredTasks = tasks.filter(function (task) {
+        return checkIncludes(task.title, title) && task.status.toLowerCase() === status;
+    });
+    displayTasks(filteredTasks);
 });
