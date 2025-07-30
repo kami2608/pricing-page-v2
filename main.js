@@ -7,6 +7,13 @@ var Status;
     Status["DONE"] = "DONE";
 })(Status || (Status = {}));
 var tasks = JSON.parse(localStorage.getItem("todos") || "[]");
+var editElement = document.getElementById("edit-task");
+var statusElement = document.getElementById("status-filter");
+var editStatusElm = document.getElementById("edit-status");
+var editTitleElm = document.getElementById("edit-title");
+var editDescElm = document.getElementById("edit-description");
+var cancelBtn = document.getElementById("cancel-button");
+var editForm = document.getElementById("edit-form");
 //functions
 function displayTasks(tasks) {
     var todoTable = document.getElementById("todolist");
@@ -18,12 +25,65 @@ function displayTasks(tasks) {
         todoTable.innerHTML = rows_1;
     }
 }
+function renderStatus(elm) {
+    if (elm) {
+        var selects = "";
+        for (var status_1 in Status) {
+            selects += "<option value=\"".concat(status_1, "\">").concat(status_1, "</option>");
+        }
+        elm.innerHTML = selects;
+    }
+}
 function deleteTask(id) {
     tasks = tasks.filter(function (task) { return task.id !== id; });
     displayTasks(tasks);
     localStorage.setItem("todos", JSON.stringify(tasks));
 }
-function editTask(id) { }
+function setValue(text, elm) {
+    if (elm) {
+        elm.value = text;
+    }
+}
+function handleEditForm(task) {
+    editForm.addEventListener("submit", function () {
+        var editedTask = {
+            id: task.id,
+            title: editTitleElm.value,
+            description: editDescElm.value,
+            status: editStatusElm.value,
+            createdAt: task.createdAt,
+            updatedAt: new Date().toLocaleString("vi-VN")
+        };
+        deleteTask(task.id);
+        tasks.push(editedTask);
+        displayTasks(tasks);
+        localStorage.setItem("todos", JSON.stringify(tasks));
+        editElement.style.display = "none";
+    });
+    cancelBtn.addEventListener("click", function () {
+        editElement.style.display = "none";
+    });
+}
+function editTask(id) {
+    if (editElement) {
+        renderStatus(editStatusElm);
+        editElement.style.display = "block";
+        var task = undefined;
+        for (var _i = 0, tasks_1 = tasks; _i < tasks_1.length; _i++) {
+            var tmp = tasks_1[_i];
+            if (tmp.id === id) {
+                task = tmp;
+                break;
+            }
+        }
+        if (task) {
+            setValue(task.title, editTitleElm);
+            setValue(task.description, editDescElm);
+            editStatusElm.value = task.status;
+            handleEditForm(task);
+        }
+    }
+}
 function getInput(field) {
     var inputElement = document.getElementById(field);
     if (inputElement) {
@@ -48,15 +108,11 @@ function checkIncludes(str, searchStr) {
     return false;
 }
 // main
-// render status filter
-var statusElement = document.getElementById("status-filter");
-if (statusElement) {
-    var selects = "";
-    for (var status_1 in Status) {
-        selects += "<option value=\"".concat(status_1, "\">").concat(status_1, "</option>");
-    }
-    statusElement.innerHTML = selects;
+if (editElement) {
+    editElement.style.display = "none";
 }
+// render status filter
+renderStatus(statusElement);
 // render tasks list
 displayTasks(tasks);
 // create task

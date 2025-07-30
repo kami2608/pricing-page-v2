@@ -21,8 +21,11 @@
     <h1>To-Do List</h1>
     <h2>Filter:</h2>
     <section class="search">
-      <label>Title: <input type="text" id="title-filter"/></label><br />
-      <label>Status: <select name="status" id="status-filter"></select></label><br /><br />
+      <label>Title: <input type="text" id="title-filter" /></label><br />
+      <label
+        >Status:
+        <select name="status" id="status-filter"></select></label
+      ><br /><br />
     </section>
     <table class="todo-table">
       <thead>
@@ -56,6 +59,21 @@
         </tr>
       </tbody>
     </table>
+    <section id="edit-task">
+      <h3>Edit task</h3>
+      <form action="#" onsubmit="return false;" id="edit-form">
+        <label for="edit-title">Title: </label><br />
+        <input type="text" id="edit-title" /><br />
+        <label for="edit-description">Description: </label><br />
+        <input type="text" id="edit-description" /><br /><br />
+        <label
+          >Status:
+          <select name="edit-status" id="edit-status"></select></label
+        ><br /><br />
+        <button type="submit">Submit</button>
+        <button type="button" id="cancel-button">Cancel</button>
+      </form>
+    </section>
 
     <!-- Script -->
     <script src="main.js"></script>
