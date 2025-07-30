@@ -51,6 +51,22 @@ function getInput(field: string): string {
   } else return "";
 }
 
+function checkIncludes(str: string, searchStr: string): boolean {
+  const tmpStr = str.toLowerCase();
+  const tmpSearchStr = searchStr.toLowerCase();
+  const len = str.length;
+
+  if (searchStr.length === 0) return true;
+  if (searchStr.length > len) return false;
+
+  for (let i = 0; i <= len - searchStr.length; i++) {
+    if (tmpStr.substring(i, i + searchStr.length) === tmpSearchStr) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // main
 
 // render status filter
@@ -65,3 +81,45 @@ if (statusElement) {
 
 // render tasks list
 displayTasks(tasks);
+
+// create task
+document.getElementById("add-form")?.addEventListener("submit", () => {
+  const title = getInput("title");
+  const description = getInput("description");
+  if (title && description) {
+    const task: Task = {
+      id: new Date().getTime(),
+      title: title,
+      description: description,
+      status: Status.TODO,
+      createdAt: new Date().toLocaleString("vi-VN"),
+      updatedAt: new Date().toLocaleString("vi-VN"),
+    };
+
+    tasks.push(task);
+    localStorage.setItem("todos", JSON.stringify(tasks));
+    alert("Added task!");
+    (document.getElementById("add-form") as HTMLFormElement)?.reset();
+    displayTasks(tasks);
+  } else {
+    alert("Please fill in the title and description");
+  }
+});
+
+document.getElementById("title-filter")?.addEventListener("input", () => {
+  const title = getInput("title-filter");
+  const status = getInput("status-filter");
+  const filteredTasks = tasks.filter(
+    (task) => checkIncludes(task.title, title) && task.status === status
+  );
+  displayTasks(filteredTasks);
+});
+
+document.getElementById("status-filter")?.addEventListener("input", () => {
+  const title = getInput("title-filter");
+  const status = getInput("status-filter");
+  const filteredTasks = tasks.filter(
+    (task) => checkIncludes(task.title, title) && task.status === status
+  );
+  displayTasks(filteredTasks);
+});
