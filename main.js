@@ -18,7 +18,11 @@ function displayTasks(tasks) {
         todoTable.innerHTML = rows_1;
     }
 }
-function deleteTask(id) { }
+function deleteTask(id) {
+    tasks = tasks.filter(function (task) { return task.id !== id; });
+    displayTasks(tasks);
+    localStorage.setItem("todos", JSON.stringify(tasks));
+}
 function editTask(id) { }
 function getInput(field) {
     var inputElement = document.getElementById(field);

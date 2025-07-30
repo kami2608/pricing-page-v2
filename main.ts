@@ -40,7 +40,11 @@ function displayTasks(tasks: Task[]) {
   }
 }
 
-function deleteTask(id: number) {}
+function deleteTask(id: number) {
+  tasks = tasks.filter((task) => task.id !== id);
+  displayTasks(tasks);
+  localStorage.setItem("todos", JSON.stringify(tasks));
+}
 
 function editTask(id: number) {}
 
