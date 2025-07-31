@@ -14,6 +14,11 @@ var statusObject = (_a = {},
 var tasks = [];
 var editElement = document.getElementById("edit-task");
 var statusElement = document.getElementById("status-filter");
+var editStatusElm = document.getElementById("edit-status");
+var editTitleElm = document.getElementById("edit-title");
+var editDescElm = document.getElementById("edit-description");
+var cancelBtn = document.getElementById("cancel-button");
+var editForm = document.getElementById("edit-form");
 var getTaskListFromLocalStorage = function () {
     var taskListFromLocal = localStorage.getItem("todos");
     if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
@@ -48,6 +53,51 @@ function deleteTask(id) {
     }
     displayTasks(tasks);
     localStorage.setItem("todos", JSON.stringify(tasks));
+}
+function setValue(text, elm) {
+    if (elm) {
+        elm.value = text;
+    }
+}
+function handleEditForm(task) {
+    editForm.addEventListener("submit", function () {
+        var editedTask = {
+            id: task.id,
+            title: editTitleElm.value,
+            description: editDescElm.value,
+            status: editStatusElm.value,
+            createdAt: task.createdAt,
+            updatedAt: new Date().toLocaleString("vi-VN"),
+        };
+        deleteTask(task.id);
+        tasks.unshift(editedTask);
+        displayTasks(tasks);
+        localStorage.setItem("todos", JSON.stringify(tasks));
+        editElement.style.display = "none";
+    });
+    cancelBtn.addEventListener("click", function () {
+        editElement.style.display = "none";
+    });
+}
+function editTask(id) {
+    if (editElement) {
+        renderStatus(editStatusElm);
+        editElement.style.display = "block";
+        var task = void 0;
+        for (var _i = 0, tasks_1 = tasks; _i < tasks_1.length; _i++) {
+            var tmp = tasks_1[_i];
+            if (tmp.id === id) {
+                task = tmp;
+                break;
+            }
+        }
+        if (task) {
+            setValue(task.title, editTitleElm);
+            setValue(task.description, editDescElm);
+            editStatusElm.value = task.status;
+            handleEditForm(task);
+        }
+    }
 }
 function main() {
     getTaskListFromLocalStorage();

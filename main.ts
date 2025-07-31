@@ -23,6 +23,15 @@ interface Task {
 const tasks: Task[] = [];
 const editElement = document.getElementById("edit-task") as HTMLElement;
 const statusElement = document.getElementById("status-filter") as HTMLElement;
+const editStatusElm = document.getElementById(
+  "edit-status"
+) as HTMLSelectElement;
+const editTitleElm = document.getElementById("edit-title") as HTMLInputElement;
+const editDescElm = document.getElementById(
+  "edit-description"
+) as HTMLInputElement;
+const cancelBtn = document.getElementById("cancel-button") as HTMLButtonElement;
+const editForm = document.getElementById("edit-form") as HTMLFormElement;
 
 const getTaskListFromLocalStorage = () => {
   const taskListFromLocal = localStorage.getItem("todos");
@@ -72,6 +81,54 @@ function deleteTask(id: number) {
   }
   displayTasks(tasks);
   localStorage.setItem("todos", JSON.stringify(tasks));
+}
+
+function setValue(text: string, elm: HTMLInputElement) {
+  if (elm) {
+    elm.value = text;
+  }
+}
+
+function handleEditForm(task: Task) {
+  editForm.addEventListener("submit", () => {
+    const editedTask: Task = {
+      id: task.id,
+      title: editTitleElm.value,
+      description: editDescElm.value,
+      status: editStatusElm.value as Status,
+      createdAt: task.createdAt,
+      updatedAt: new Date().toLocaleString("vi-VN"),
+    };
+    deleteTask(task.id);
+    tasks.unshift(editedTask);
+    displayTasks(tasks);
+    localStorage.setItem("todos", JSON.stringify(tasks));
+    editElement.style.display = "none";
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    editElement.style.display = "none";
+  });
+}
+
+function editTask(id: number) {
+  if (editElement) {
+    renderStatus(editStatusElm);
+    editElement.style.display = "block";
+    let task;
+    for (const tmp of tasks) {
+      if (tmp.id === id) {
+        task = tmp;
+        break;
+      }
+    }
+    if (task) {
+      setValue(task.title, editTitleElm);
+      setValue(task.description, editDescElm);
+      editStatusElm.value = task.status;
+      handleEditForm(task);
+    }
+  }
 }
 
 function main() {
