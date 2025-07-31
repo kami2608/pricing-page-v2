@@ -94,7 +94,7 @@ document.getElementById("add-form")?.addEventListener("submit", () => {
       id: new Date().getTime(),
       title: title,
       description: description,
-      status: statusObject[Status.TODO] || "TODO",
+      status: statusObject[Status.TODO],
       createdAt: new Date().toLocaleString("vi-VN"),
       updatedAt: new Date().toLocaleString("vi-VN"),
     };
