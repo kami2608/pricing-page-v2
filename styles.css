@@ -1,0 +1,44 @@
+
+.add-task input {
+    width: 50%;
+}
+
+.todo-table {
+  width: 95%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.todo-table th,
+.todo-table td {
+  border: 1px solid black;
+  padding: 12px;
+  text-align: left;
+}
+
+.todo-table th {
+  background-color: #494545;
+  color: white;
+}
+
+
+.search {
+  display: flex;
+  gap: 20px;
+}
+
+#edit-task {
+  background-color: #b5b5b5;
+  width: 30%;
+  padding: 20px;
+  border: 1px solid black;
+  margin: 30px auto;
+  position: absolute;
+  top: 50px;
+  right: 50px;
+  
+}
+
+#edit-task input {
+  width: 90%;
+}
