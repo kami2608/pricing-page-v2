@@ -32,6 +32,37 @@ const getTaskListFromLocalStorage = () => {
   }
 };
 
+const debounce = <T extends unknown[]>(
+  callback: (...args: T) => void,
+  delay: number
+) => {
+  let timeoutTimer: ReturnType<typeof setTimeout>;
+
+  return (...args: T) => {
+    clearTimeout(timeoutTimer);
+
+    timeoutTimer = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+};
+
+function checkIncludes(str: string, searchStr: string): boolean {
+  const tmpStr = str.toLowerCase();
+  const tmpSearchStr = searchStr.toLowerCase();
+  const len = str.length;
+
+  if (searchStr.length === 0) return true;
+  if (searchStr.length > len) return false;
+
+  for (let i = 0; i <= len - searchStr.length; i++) {
+    if (tmpStr.substring(i, i + searchStr.length) === tmpSearchStr) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
   if (todoTable) {
@@ -65,6 +96,13 @@ function renderStatus(elm: HTMLElement) {
   }
 }
 
+function getInput(field: string): string {
+  const inputElement = document.getElementById(field) as HTMLInputElement;
+  if (inputElement) {
+    return inputElement.value;
+  } else return "";
+}
+
 function main() {
   getTaskListFromLocalStorage();
   if (editElement) {
@@ -77,3 +115,28 @@ function main() {
 
 // main
 main();
+
+document.getElementById("title-filter")?.addEventListener(
+  "input",
+  debounce(() => {
+    const title = getInput("title-filter");
+    const status = getInput("status-filter");
+    const filteredTasks = tasks.filter(
+      (task) =>
+        checkIncludes(task.title, title) &&
+        (status !== "" ? task.status === status : true)
+    );
+    displayTasks(filteredTasks);
+  }, 1000)
+);
+
+document.getElementById("status-filter")?.addEventListener("input", () => {
+  const title = getInput("title-filter");
+  const status = getInput("status-filter");
+  const filteredTasks = tasks.filter(
+    (task) =>
+      checkIncludes(task.title, title) &&
+      (status !== "" ? task.status === status : true)
+  );
+  displayTasks(filteredTasks);
+});

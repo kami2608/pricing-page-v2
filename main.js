@@ -1,4 +1,5 @@
 var _a;
+var _b, _c;
 // variables, enums, interfaces
 var Status;
 (function (Status) {
@@ -20,6 +21,34 @@ var getTaskListFromLocalStorage = function () {
         tasks.push.apply(tasks, JSON.parse(taskListFromLocal));
     }
 };
+var debounce = function (callback, delay) {
+    var timeoutTimer;
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        clearTimeout(timeoutTimer);
+        timeoutTimer = setTimeout(function () {
+            callback.apply(void 0, args);
+        }, delay);
+    };
+};
+function checkIncludes(str, searchStr) {
+    var tmpStr = str.toLowerCase();
+    var tmpSearchStr = searchStr.toLowerCase();
+    var len = str.length;
+    if (searchStr.length === 0)
+        return true;
+    if (searchStr.length > len)
+        return false;
+    for (var i = 0; i <= len - searchStr.length; i++) {
+        if (tmpStr.substring(i, i + searchStr.length) === tmpSearchStr) {
+            return true;
+        }
+    }
+    return false;
+}
 function displayTasks(tasks) {
     var todoTable = document.getElementById("todolist");
     if (todoTable) {
@@ -41,6 +70,14 @@ function renderStatus(elm) {
         elm.innerHTML = options_1;
     }
 }
+function getInput(field) {
+    var inputElement = document.getElementById(field);
+    if (inputElement) {
+        return inputElement.value;
+    }
+    else
+        return "";
+}
 function main() {
     getTaskListFromLocalStorage();
     if (editElement) {
@@ -51,3 +88,21 @@ function main() {
 }
 // main
 main();
+(_b = document.getElementById("title-filter")) === null || _b === void 0 ? void 0 : _b.addEventListener("input", debounce(function () {
+    var title = getInput("title-filter");
+    var status = getInput("status-filter");
+    var filteredTasks = tasks.filter(function (task) {
+        return checkIncludes(task.title, title) &&
+            (status !== "" ? task.status === status : true);
+    });
+    displayTasks(filteredTasks);
+}, 1000));
+(_c = document.getElementById("status-filter")) === null || _c === void 0 ? void 0 : _c.addEventListener("input", function () {
+    var title = getInput("title-filter");
+    var status = getInput("status-filter");
+    var filteredTasks = tasks.filter(function (task) {
+        return checkIncludes(task.title, title) &&
+            (status !== "" ? task.status === status : true);
+    });
+    displayTasks(filteredTasks);
+});
