@@ -5,39 +5,36 @@ enum Status {
   DONE = "DONE",
 }
 
+const statusObject = {
+  [Status.DONE]: "DONE",
+  [Status.TODO]: "TODO",
+  [Status.PROGRESS]: "PROGRESS",
+};
+
 interface Task {
   id: number;
   title: string;
   description: string;
-  status: Status;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }
 
-const tasks: Task[] = Array.isArray(JSON.parse(localStorage.getItem("todos") || "[]")) ? JSON.parse(localStorage.getItem("todos") || "[]") : [];
-
+const tasks: Task[] = [];
 const editElement = document.getElementById("edit-task") as HTMLElement;
 const statusElement = document.getElementById("status-filter") as HTMLElement;
 
-//functions
-const debounce = <T extends unknown[]>(
-  callback: (...args: T) => void,
-  delay: number
-) => {
-  let timeoutTimer: ReturnType<typeof setTimeout>;
+const getTaskListFromLocalStorage = () => {
+  const taskListFromLocal = localStorage.getItem("todos");
 
-  return (...args: T) => {
-    clearTimeout(timeoutTimer);
-
-    timeoutTimer = setTimeout(() => {
-      callback(...args);
-    }, delay);
-  };
+  if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
+    tasks.push(...JSON.parse(taskListFromLocal));
+  }
 };
 
 function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
-  if (todoTable && Array.isArray(tasks)) {
+  if (todoTable) {
     let rows = "";
     tasks.forEach((task) => {
       rows += `
@@ -59,40 +56,24 @@ function displayTasks(tasks: Task[]) {
 
 function renderStatus(elm: HTMLElement) {
   if (elm) {
-    let selects = `<option value="">Choose status</option>`;
-    for (const status in Status) {
-      selects += `<option value="${status}">${status}</option>`;
-    }
-    elm.innerHTML = selects;
+    let options = `<option value="">Choose status</option>`;
+    Object.keys(statusObject).forEach((key) => {
+      const status = statusObject[key];
+      if (status) options += `<option value="${status}">${status}</option>`;
+    });
+    elm.innerHTML = options;
   }
 }
 
-
-function setValue(text: string, elm: HTMLInputElement) {
-  if (elm) {
-    elm.value = text;
+function main() {
+  getTaskListFromLocalStorage();
+  if (editElement) {
+    editElement.style.display = "none";
   }
-}
+  renderStatus(statusElement);
 
-function getInput(field: string): string {
-  const inputElement = document.getElementById(field) as HTMLInputElement;
-  if (inputElement) {
-    return inputElement.value;
-  } else return "";
+  displayTasks(tasks);
 }
-
 
 // main
-
-if (editElement) {
-  editElement.style.display = "none";
-}
-
-// render status filter
-
-renderStatus(statusElement);
-
-// render tasks list
-displayTasks(tasks);
-
-// create task
+main();
