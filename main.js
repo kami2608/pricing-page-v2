@@ -41,6 +41,14 @@ function renderStatus(elm) {
         elm.innerHTML = options_1;
     }
 }
+function deleteTask(id) {
+    var index = tasks.findIndex(function (task) { return task.id === id; });
+    if (index !== -1) {
+        tasks.splice(index, 1);
+    }
+    displayTasks(tasks);
+    localStorage.setItem("todos", JSON.stringify(tasks));
+}
 function main() {
     getTaskListFromLocalStorage();
     if (editElement) {

@@ -65,6 +65,15 @@ function renderStatus(elm: HTMLElement) {
   }
 }
 
+function deleteTask(id: number) {
+  const index = tasks.findIndex((task) => task.id === id);
+  if (index !== -1) {
+    tasks.splice(index, 1);
+  }
+  displayTasks(tasks);
+  localStorage.setItem("todos", JSON.stringify(tasks));
+}
+
 function main() {
   getTaskListFromLocalStorage();
   if (editElement) {
