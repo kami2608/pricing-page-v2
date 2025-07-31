@@ -1,4 +1,5 @@
 var _a;
+var _b;
 // variables, enums, interfaces
 var Status;
 (function (Status) {
@@ -12,19 +13,8 @@ var statusObject = (_a = {},
     _a[Status.PROGRESS] = "PROGRESS",
     _a);
 var tasks = [];
-var statusObject = (_a = {},
-    _a[Status.DONE] = "DONE",
-    _a[Status.TODO] = "TODO",
-    _a[Status.PROGRESS] = "PROGRESS",
-    _a);
-var tasks = [];
 var editElement = document.getElementById("edit-task");
 var statusElement = document.getElementById("status-filter");
-var getTaskListFromLocalStorage = function () {
-    var taskListFromLocal = localStorage.getItem("todos");
-    if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
-        tasks.push.apply(tasks, JSON.parse(taskListFromLocal));
-    }
 var getTaskListFromLocalStorage = function () {
     var taskListFromLocal = localStorage.getItem("todos");
     if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
@@ -33,7 +23,6 @@ var getTaskListFromLocalStorage = function () {
 };
 function displayTasks(tasks) {
     var todoTable = document.getElementById("todolist");
-    if (todoTable) {
     if (todoTable) {
         var rows_1 = "";
         tasks.forEach(function (task) {
@@ -44,13 +33,6 @@ function displayTasks(tasks) {
 }
 function renderStatus(elm) {
     if (elm) {
-        var options_1 = "<option value=\"\">Choose status</option>";
-        Object.keys(statusObject).forEach(function (key) {
-            var status = statusObject[key];
-            if (status)
-                options_1 += "<option value=\"".concat(status, "\">").concat(status, "</option>");
-        });
-        elm.innerHTML = options_1;
         var options_1 = "<option value=\"\">Choose status</option>";
         Object.keys(statusObject).forEach(function (key) {
             var status = statusObject[key];
@@ -73,8 +55,8 @@ function getInput(field) {
     if (inputElement) {
         return inputElement.value;
     }
-    renderStatus(statusElement);
-    displayTasks(tasks);
+    else
+        return "";
 }
 // main
 main();

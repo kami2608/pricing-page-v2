@@ -16,12 +16,10 @@ interface Task {
   title: string;
   description: string;
   status: string;
-  status: string;
   createdAt: string;
   updatedAt: string;
 }
 
-const tasks: Task[] = [];
 const tasks: Task[] = [];
 const editElement = document.getElementById("edit-task") as HTMLElement;
 const statusElement = document.getElementById("status-filter") as HTMLElement;
@@ -32,17 +30,10 @@ const getTaskListFromLocalStorage = () => {
   if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
     tasks.push(...JSON.parse(taskListFromLocal));
   }
-const getTaskListFromLocalStorage = () => {
-  const taskListFromLocal = localStorage.getItem("todos");
-
-  if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
-    tasks.push(...JSON.parse(taskListFromLocal));
-  }
 };
 
 function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
-  if (todoTable) {
   if (todoTable) {
     let rows = "";
     tasks.forEach((task) => {
@@ -93,7 +84,6 @@ function getInput(field: string): string {
 
 // main
 main();
-
 
 document.getElementById("add-form")?.addEventListener("submit", () => {
   const title = getInput("title");
