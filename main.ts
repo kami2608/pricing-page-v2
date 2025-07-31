@@ -79,7 +79,8 @@ function getInput(field: string): string {
   const inputElement = document.getElementById(field) as HTMLInputElement;
   if (inputElement) {
     return inputElement.value;
-  } else return "";
+  }
+  return "";
 }
 
 // main

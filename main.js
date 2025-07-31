@@ -55,8 +55,7 @@ function getInput(field) {
     if (inputElement) {
         return inputElement.value;
     }
-    else
-        return "";
+    return "";
 }
 // main
 main();
