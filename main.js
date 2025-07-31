@@ -1,4 +1,5 @@
 var _a;
+var _b;
 // variables, enums, interfaces
 var Status;
 (function (Status) {
@@ -49,5 +50,35 @@ function main() {
     renderStatus(statusElement);
     displayTasks(tasks);
 }
+function getInput(field) {
+    var inputElement = document.getElementById(field);
+    if (inputElement) {
+        return inputElement.value;
+    }
+    return "";
+}
 // main
 main();
+(_b = document.getElementById("add-form")) === null || _b === void 0 ? void 0 : _b.addEventListener("submit", function () {
+    var _a;
+    var title = getInput("title");
+    var description = getInput("description");
+    if (title && description) {
+        var task = {
+            id: new Date().getTime(),
+            title: title,
+            description: description,
+            status: statusObject[Status.TODO],
+            createdAt: new Date().toLocaleString("vi-VN"),
+            updatedAt: new Date().toLocaleString("vi-VN"),
+        };
+        tasks.unshift(task);
+        localStorage.setItem("todos", JSON.stringify(tasks));
+        alert("Added task!");
+        (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.reset();
+        displayTasks(tasks);
+    }
+    else {
+        alert("Please fill in the title and description");
+    }
+});
