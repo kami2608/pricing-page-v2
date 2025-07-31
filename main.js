@@ -79,12 +79,54 @@ function getInput(field) {
         return "";
 }
 function main() {
+    var _a, _b, _c;
     getTaskListFromLocalStorage();
     if (editElement) {
         editElement.style.display = "none";
     }
     renderStatus(statusElement);
     displayTasks(tasks);
+    (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", function () {
+        var _a;
+        var title = getInput("title");
+        var description = getInput("description");
+        if (title && description) {
+            var task = {
+                id: new Date().getTime(),
+                title: title,
+                description: description,
+                status: statusObject[Status.TODO],
+                createdAt: new Date().toLocaleString("vi-VN"),
+                updatedAt: new Date().toLocaleString("vi-VN"),
+            };
+            tasks.unshift(task);
+            localStorage.setItem("todos", JSON.stringify(tasks));
+            alert("Added task!");
+            (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.reset();
+            displayTasks(tasks);
+        }
+        else {
+            alert("Please fill in the title and description");
+        }
+    });
+    (_b = document.getElementById("title-filter")) === null || _b === void 0 ? void 0 : _b.addEventListener("input", debounce(function () {
+        var title = getInput("title-filter");
+        var status = getInput("status-filter");
+        var filteredTasks = tasks.filter(function (task) {
+            return checkIncludes(task.title, title) &&
+                (status !== "" ? task.status === status : true);
+        });
+        displayTasks(filteredTasks);
+    }, 1000));
+    (_c = document.getElementById("status-filter")) === null || _c === void 0 ? void 0 : _c.addEventListener("input", function () {
+        var title = getInput("title-filter");
+        var status = getInput("status-filter");
+        var filteredTasks = tasks.filter(function (task) {
+            return checkIncludes(task.title, title) &&
+                (status !== "" ? task.status === status : true);
+        });
+        displayTasks(filteredTasks);
+    });
 }
 // main
 main();
