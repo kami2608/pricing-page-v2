@@ -115,13 +115,7 @@ function editTask(id: number) {
   if (editElement) {
     renderStatus(editStatusElm);
     editElement.style.display = "block";
-    let task;
-    for (const tmp of tasks) {
-      if (tmp.id === id) {
-        task = tmp;
-        break;
-      }
-    }
+    const task = tasks.find((task) => task.id === id);
     if (task) {
       setValue(task.title, editTitleElm);
       setValue(task.description, editDescElm);

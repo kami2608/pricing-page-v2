@@ -83,14 +83,7 @@ function editTask(id) {
     if (editElement) {
         renderStatus(editStatusElm);
         editElement.style.display = "block";
-        var task = void 0;
-        for (var _i = 0, tasks_1 = tasks; _i < tasks_1.length; _i++) {
-            var tmp = tasks_1[_i];
-            if (tmp.id === id) {
-                task = tmp;
-                break;
-            }
-        }
+        var task = tasks.find(function (task) { return task.id === id; });
         if (task) {
             setValue(task.title, editTitleElm);
             setValue(task.description, editDescElm);
