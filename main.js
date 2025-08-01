@@ -50,9 +50,9 @@ function deleteTask(id) {
     var index = tasks.findIndex(function (task) { return task.id === id; });
     if (index !== -1) {
         tasks.splice(index, 1);
+        displayTasks(tasks);
+        localStorage.setItem("todos", JSON.stringify(tasks));
     }
-    displayTasks(tasks);
-    localStorage.setItem("todos", JSON.stringify(tasks));
 }
 function setValue(text, elm) {
     if (elm) {
