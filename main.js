@@ -1,5 +1,4 @@
 var _a;
-var _b, _c;
 // variables, enums, interfaces
 var Status;
 (function (Status) {
@@ -75,8 +74,7 @@ function getInput(field) {
     if (inputElement) {
         return inputElement.value;
     }
-    else
-        return "";
+    return "";
 }
 function main() {
     var _a, _b, _c;
@@ -113,7 +111,7 @@ function main() {
         var title = getInput("title-filter");
         var status = getInput("status-filter");
         var filteredTasks = tasks.filter(function (task) {
-            return checkIncludes(task.title, title) &&
+            return task.title.includes(title) &&
                 (status !== "" ? task.status === status : true);
         });
         displayTasks(filteredTasks);
@@ -122,7 +120,7 @@ function main() {
         var title = getInput("title-filter");
         var status = getInput("status-filter");
         var filteredTasks = tasks.filter(function (task) {
-            return checkIncludes(task.title, title) &&
+            return task.title.includes(title) &&
                 (status !== "" ? task.status === status : true);
         });
         displayTasks(filteredTasks);
@@ -130,21 +128,3 @@ function main() {
 }
 // main
 main();
-(_b = document.getElementById("title-filter")) === null || _b === void 0 ? void 0 : _b.addEventListener("input", debounce(function () {
-    var title = getInput("title-filter");
-    var status = getInput("status-filter");
-    var filteredTasks = tasks.filter(function (task) {
-        return checkIncludes(task.title, title) &&
-            (status !== "" ? task.status === status : true);
-    });
-    displayTasks(filteredTasks);
-}, 1000));
-(_c = document.getElementById("status-filter")) === null || _c === void 0 ? void 0 : _c.addEventListener("input", function () {
-    var title = getInput("title-filter");
-    var status = getInput("status-filter");
-    var filteredTasks = tasks.filter(function (task) {
-        return checkIncludes(task.title, title) &&
-            (status !== "" ? task.status === status : true);
-    });
-    displayTasks(filteredTasks);
-});

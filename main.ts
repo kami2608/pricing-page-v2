@@ -47,22 +47,6 @@ const debounce = <T extends unknown[]>(
   };
 };
 
-function checkIncludes(str: string, searchStr: string): boolean {
-  const tmpStr = str.toLowerCase();
-  const tmpSearchStr = searchStr.toLowerCase();
-  const len = str.length;
-
-  if (searchStr.length === 0) return true;
-  if (searchStr.length > len) return false;
-
-  for (let i = 0; i <= len - searchStr.length; i++) {
-    if (tmpStr.substring(i, i + searchStr.length) === tmpSearchStr) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
   if (todoTable) {
@@ -143,7 +127,7 @@ function main() {
       const status = getInput("status-filter");
       const filteredTasks = tasks.filter(
         (task) =>
-          checkIncludes(task.title, title) &&
+          task.title.includes(title) &&
           (status !== "" ? task.status === status : true)
       );
       displayTasks(filteredTasks);
@@ -155,7 +139,7 @@ function main() {
     const status = getInput("status-filter");
     const filteredTasks = tasks.filter(
       (task) =>
-        checkIncludes(task.title, title) &&
+        task.title.includes(title) &&
         (status !== "" ? task.status === status : true)
     );
     displayTasks(filteredTasks);
