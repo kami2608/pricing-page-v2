@@ -32,6 +32,21 @@ const getTaskListFromLocalStorage = () => {
   }
 };
 
+const debounce = <T extends unknown[]>(
+  callback: (...args: T) => void,
+  delay: number
+) => {
+  let timeoutTimer: ReturnType<typeof setTimeout>;
+
+  return (...args: T) => {
+    clearTimeout(timeoutTimer);
+
+    timeoutTimer = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+};
+
 function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
   if (todoTable) {
@@ -103,6 +118,31 @@ function main() {
     } else {
       alert("Please fill in the title and description");
     }
+  });
+
+  document.getElementById("title-filter")?.addEventListener(
+    "input",
+    debounce(() => {
+      const title = getInput("title-filter");
+      const status = getInput("status-filter");
+      const filteredTasks = tasks.filter(
+        (task) =>
+          task.title.includes(title) &&
+          (status !== "" ? task.status === status : true)
+      );
+      displayTasks(filteredTasks);
+    }, 1000)
+  );
+
+  document.getElementById("status-filter")?.addEventListener("input", () => {
+    const title = getInput("title-filter");
+    const status = getInput("status-filter");
+    const filteredTasks = tasks.filter(
+      (task) =>
+        task.title.includes(title) &&
+        (status !== "" ? task.status === status : true)
+    );
+    displayTasks(filteredTasks);
   });
 }
 
