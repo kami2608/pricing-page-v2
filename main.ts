@@ -74,6 +74,14 @@ function deleteTask(id: number) {
   localStorage.setItem("todos", JSON.stringify(tasks));
 }
 
+function getInput(field: string): string {
+  const inputElement = document.getElementById(field) as HTMLInputElement;
+  if (inputElement) {
+    return inputElement.value;
+  }
+  return "";
+}
+
 function main() {
   getTaskListFromLocalStorage();
   if (editElement) {
@@ -82,6 +90,29 @@ function main() {
   renderStatus(statusElement);
 
   displayTasks(tasks);
+
+  document.getElementById("add-form")?.addEventListener("submit", () => {
+    const title = getInput("title");
+    const description = getInput("description");
+    if (title && description) {
+      const task: Task = {
+        id: new Date().getTime(),
+        title: title,
+        description: description,
+        status: statusObject[Status.TODO],
+        createdAt: new Date().toLocaleString("vi-VN"),
+        updatedAt: new Date().toLocaleString("vi-VN"),
+      };
+
+      tasks.unshift(task);
+      localStorage.setItem("todos", JSON.stringify(tasks));
+      alert("Added task!");
+      (document.getElementById("add-form") as HTMLFormElement)?.reset();
+      displayTasks(tasks);
+    } else {
+      alert("Please fill in the title and description");
+    }
+  });
 }
 
 // main

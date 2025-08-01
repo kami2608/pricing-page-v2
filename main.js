@@ -49,13 +49,44 @@ function deleteTask(id) {
     displayTasks(tasks);
     localStorage.setItem("todos", JSON.stringify(tasks));
 }
+function getInput(field) {
+    var inputElement = document.getElementById(field);
+    if (inputElement) {
+        return inputElement.value;
+    }
+    return "";
+}
 function main() {
+    var _a;
     getTaskListFromLocalStorage();
     if (editElement) {
         editElement.style.display = "none";
     }
     renderStatus(statusElement);
     displayTasks(tasks);
+    (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.addEventListener("submit", function () {
+        var _a;
+        var title = getInput("title");
+        var description = getInput("description");
+        if (title && description) {
+            var task = {
+                id: new Date().getTime(),
+                title: title,
+                description: description,
+                status: statusObject[Status.TODO],
+                createdAt: new Date().toLocaleString("vi-VN"),
+                updatedAt: new Date().toLocaleString("vi-VN"),
+            };
+            tasks.unshift(task);
+            localStorage.setItem("todos", JSON.stringify(tasks));
+            alert("Added task!");
+            (_a = document.getElementById("add-form")) === null || _a === void 0 ? void 0 : _a.reset();
+            displayTasks(tasks);
+        }
+        else {
+            alert("Please fill in the title and description");
+        }
+    });
 }
 // main
 main();
