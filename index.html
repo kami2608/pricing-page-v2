@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>To-Do List</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="src/style.css" />
   </head>
   <body>
     <div class="add-task">
@@ -62,6 +62,8 @@
     <section id="edit-task">
       <h3>Edit task</h3>
       <form action="#" onsubmit="return false;" id="edit-form">
+        <label for="edit-id">ID:</label><br />
+        <input type="text" id="edit-id" readonly style="color: gray" /><br />
         <label for="edit-title">Title: </label><br />
         <input type="text" id="edit-title" /><br />
         <label for="edit-description">Description: </label><br />
@@ -70,12 +72,12 @@
           >Status:
           <select name="edit-status" id="edit-status"></select></label
         ><br /><br />
-        <button type="submit">Submit</button>
+        <button type="submit" id="submit-button">Submit</button>
         <button type="button" id="cancel-button">Cancel</button>
       </form>
     </section>
 
     <!-- Script -->
-    <script src="main.js"></script>
+    <script src="src/main.ts"></script>
   </body>
 </html>
