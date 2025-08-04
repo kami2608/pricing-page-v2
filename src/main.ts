@@ -24,12 +24,12 @@ const tasks: Task[] = [];
 const editElement = document.getElementById("edit-task") as HTMLElement;
 const statusElement = document.getElementById("status-filter") as HTMLElement;
 const editStatusElm = document.getElementById(
-  "edit-status"
+  "edit-status",
 ) as HTMLSelectElement;
 const editTitleElm = document.getElementById("edit-title") as HTMLInputElement;
 const editIdElm = document.getElementById("edit-id") as HTMLInputElement;
 const editDescElm = document.getElementById(
-  "edit-description"
+  "edit-description",
 ) as HTMLInputElement;
 const cancelBtn = document.getElementById("cancel-button") as HTMLButtonElement;
 const editForm = document.getElementById("edit-form") as HTMLFormElement;
@@ -165,7 +165,7 @@ function main() {
 
   if (editForm)
     editForm.addEventListener("submit", () =>
-      handleEditForm(getInput("edit-id"))
+      handleEditForm(getInput("edit-id")),
     );
   if (cancelBtn && editElement)
     cancelBtn.addEventListener("click", () => {
