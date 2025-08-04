@@ -19,7 +19,7 @@ interface Task {
   createdAt: string;
   updatedAt: string;
 }
-let tasks: Task[] = [];
+// let tasks: Task[] = [];
 
 const todoTable = document.getElementById("todolist");
 const editElement = document.getElementById("edit-task") as HTMLElement;
@@ -35,13 +35,13 @@ const editDescElm = document.getElementById(
 const cancelBtn = document.getElementById("cancel-button") as HTMLButtonElement;
 const editForm = document.getElementById("edit-form") as HTMLFormElement;
 
-const getTaskListFromLocalStorage = () => {
+function getTaskListFromLocalStorage(): Task[] {
   const taskListFromLocal = localStorage.getItem("todos");
-
   if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
-    tasks.push(...JSON.parse(taskListFromLocal));
+    return JSON.parse(taskListFromLocal);
   }
-};
+  return [];
+}
 
 function saveInLocal(taskList: Task[]) {
   localStorage.setItem("todos", JSON.stringify(taskList));
@@ -83,19 +83,24 @@ function renderStatus(elm: HTMLElement) {
   }
 }
 
-function deletedTasks(id: string): Task[] {
+function deletedTasks(id: string, tasks: Task[]): Task[] {
   console.log(typeof id);
   console.log(typeof tasks[0].id);
   return tasks.filter((task) => task.id !== id);
 }
 
 function handleDeleteTask(id: string) {
-  tasks = deletedTasks(id);
+  let tasks = getTaskListFromLocalStorage();
+  tasks = deletedTasks(id, tasks);
   displayTasks(tasks);
   saveInLocal(tasks);
 }
 
-function editedTasks(id: string, editedTask: Partial<Task>): Task[] {
+function editedTasks(
+  id: string,
+  editedTask: Partial<Task>,
+  tasks: Task[],
+): Task[] {
   return tasks.map((task) => {
     if (task.id === id) {
       return {
@@ -109,11 +114,16 @@ function editedTasks(id: string, editedTask: Partial<Task>): Task[] {
 }
 
 function handleEditForm(id: string) {
-  tasks = editedTasks(id, {
-    title: editTitleElm.value,
-    description: editDescElm.value,
-    status: editStatusElm.value,
-  });
+  let tasks = getTaskListFromLocalStorage();
+  tasks = editedTasks(
+    id,
+    {
+      title: editTitleElm.value,
+      description: editDescElm.value,
+      status: editStatusElm.value,
+    },
+    tasks,
+  );
   displayTasks(tasks);
   saveInLocal(tasks);
   editElement.style.display = "none";
@@ -126,6 +136,7 @@ function setValue(text: string, elm: HTMLInputElement) {
 }
 
 function handleEditTask(id: string) {
+  const tasks = getTaskListFromLocalStorage();
   if (editElement) {
     const task = tasks.find((task) => task.id === id);
     if (task) {
@@ -158,7 +169,7 @@ function createdTask(title: string, description: string): Task {
   };
 }
 
-function addTask() {
+function addTask(tasks: Task[]) {
   const title = getInput("title");
   const description = getInput("description");
   if (title && description) {
@@ -174,7 +185,8 @@ function addTask() {
 }
 
 function main() {
-  getTaskListFromLocalStorage();
+  // getTaskListFromLocalStorage();
+  const tasks = getTaskListFromLocalStorage();
   if (editElement) {
     editElement.style.display = "none";
   }
@@ -184,7 +196,7 @@ function main() {
 
   document
     .getElementById("add-form")
-    ?.addEventListener("submit", () => addTask());
+    ?.addEventListener("submit", () => addTask(tasks));
 
   if (editForm)
     editForm.addEventListener("submit", () =>
