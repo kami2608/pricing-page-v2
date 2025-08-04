@@ -63,8 +63,8 @@ function displayTasks(tasks: Task[]) {
         <td>${task.status}</td>
         <td>${task.createdAt}</td>
         <td>${task.updatedAt}</td>
-        <td><button onclick="handleEditTask(${task.id})">Edit</button></td>
-        <td><button onclick="handleDeleteTask(${task.id})">Delete</button></td>
+        <td><button onclick="handleEditTask('${task.id}')">Edit</button></td>
+        <td><button onclick="handleDeleteTask('${task.id}')">Delete</button></td>
       </tr>
     `;
     });
@@ -83,19 +83,21 @@ function renderStatus(elm: HTMLElement) {
   }
 }
 
-function deleteTask(id: string): Task[] {
-  return tasks.filter((task) => task.id != id);
+function deletedTasks(id: string): Task[] {
+  console.log(typeof id);
+  console.log(typeof tasks[0].id);
+  return tasks.filter((task) => task.id !== id);
 }
 
 function handleDeleteTask(id: string) {
-  tasks = deleteTask(id);
+  tasks = deletedTasks(id);
   displayTasks(tasks);
   saveInLocal(tasks);
 }
 
-function editTask(id: string, editedTask: Partial<Task>): Task[] {
+function editedTasks(id: string, editedTask: Partial<Task>): Task[] {
   return tasks.map((task) => {
-    if (task.id == id) {
+    if (task.id === id) {
       return {
         ...task,
         ...editedTask,
@@ -107,7 +109,7 @@ function editTask(id: string, editedTask: Partial<Task>): Task[] {
 }
 
 function handleEditForm(id: string) {
-  tasks = editTask(id, {
+  tasks = editedTasks(id, {
     title: editTitleElm.value,
     description: editDescElm.value,
     status: editStatusElm.value,
@@ -125,7 +127,7 @@ function setValue(text: string, elm: HTMLInputElement) {
 
 function handleEditTask(id: string) {
   if (editElement) {
-    const task = tasks.find((task) => task.id == id);
+    const task = tasks.find((task) => task.id === id);
     if (task) {
       renderStatus(editStatusElm);
       setValue(task.id, editIdElm);
