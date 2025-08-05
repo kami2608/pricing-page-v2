@@ -1,3 +1,5 @@
+// import axios from "axios";
+
 // variables, enums, interfaces
 enum Status {
   TODO = "TODO",
@@ -20,7 +22,8 @@ interface Task {
   updatedAt: string;
 }
 
-const tasks: Task[] = [];
+const APIUrl = "https://68917047447ff4f11fbc8ceb.mockapi.io/api/v1/tasks";
+let tasks: Task[] = [];
 const editElement = document.getElementById("edit-task") as HTMLElement;
 const statusElement = document.getElementById("status-filter") as HTMLElement;
 const editStatusElm = document.getElementById(
@@ -34,13 +37,41 @@ const editDescElm = document.getElementById(
 const cancelBtn = document.getElementById("cancel-button") as HTMLButtonElement;
 const editForm = document.getElementById("edit-form") as HTMLFormElement;
 
-const getTaskListFromLocalStorage = () => {
-  const taskListFromLocal = localStorage.getItem("todos");
+function convertTaskData(tasks: Task[]): Task[] {
+  return tasks.map((task) => ({
+    ...task,
+    status: statusObject[Status.TODO],
+    createdAt: getCurrentTimeString(),
+    updatedAt: getCurrentTimeString(),
+  }));
+}
 
-  if (taskListFromLocal && Array.isArray(JSON.parse(taskListFromLocal))) {
-    tasks.push(...JSON.parse(taskListFromLocal));
+async function getTaskListFromMockAPI() {
+  try {
+    // const response = await axios.get<Task[]>(APIUrl);
+    const response = await fetch(APIUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      tasks = convertTaskData(data);
+    }
+  } catch (error) {
+    console.log("Error: ", error);
   }
-};
+}
+
+async function saveTaskListInMockAPI(task: Task) {
+  try {
+    const response = await fetch(APIUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(task),
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
 
 function displayTasks(tasks: Task[]) {
   const todoTable = document.getElementById("todolist");
@@ -55,8 +86,8 @@ function displayTasks(tasks: Task[]) {
         <td>${task.status}</td>
         <td>${task.createdAt}</td>
         <td>${task.updatedAt}</td>
-        <td><button onclick="editTask(${task.id})">Edit</button></td>
-        <td><button onclick="deleteTask(${task.id})">Delete</button></td>
+        <td><button onclick="handleEditTask(${task.id})">Edit</button></td>
+        <td><button onclick="handleDeleteTask(${task.id})">Delete</button></td>
       </tr>
     `;
     });
@@ -75,12 +106,51 @@ function renderStatus(elm: HTMLElement) {
   }
 }
 
-function deleteTask(id: string) {
-  const index = tasks.findIndex((task) => task.id === id);
-  if (index !== -1) {
-    tasks.splice(index, 1);
-    displayTasks(tasks);
-    localStorage.setItem("todos", JSON.stringify(tasks));
+async function deleteTaskInMockAPI(id: string) {
+  try {
+    const response = await fetch(`${APIUrl}/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
+async function editTaskInMockAPI(id: string, task: Partial<Task>) {
+  try {
+    const response = await fetch(`${APIUrl}/${id}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(task),
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
+function deleteTaskById(id: string, tasks: Task[]): Task[] {
+  return tasks.filter((task) => task.id !== id.toString());
+}
+
+async function handleDeleteTask(id: string) {
+  tasks = deleteTaskById(id, tasks);
+  displayTasks(tasks);
+  await deleteTaskInMockAPI(id);
+}
+
+function handleEditTask(id: string) {
+  if (editElement) {
+    const task = tasks.find((task) => task.id === id.toString());
+    if (task) {
+      renderStatus(editStatusElm);
+      setValue(task.id, editIdElm);
+      setValue(task.title, editTitleElm);
+      setValue(task.description, editDescElm);
+      editStatusElm.value = task.status;
+      editElement.style.display = "block";
+    }
   }
 }
 
@@ -90,37 +160,40 @@ function setValue(text: string, elm: HTMLInputElement) {
   }
 }
 
-function handleEditForm(id: string) {
-  const task = tasks.find((task) => task.id == id);
-  if (task) {
-    deleteTask(task.id);
-    const editedTask: Task = {
-      id: task.id,
+function editTaskById(
+  id: string,
+  editedTask: Partial<Task>,
+  tasks: Task[],
+): Task[] {
+  return tasks.map((task) => {
+    if (task.id === id.toString()) {
+      return {
+        ...task,
+        ...editedTask,
+        updatedAt: getCurrentTimeString(),
+      };
+    }
+    return task;
+  });
+}
+
+async function handleEditForm(id: string) {
+  tasks = editTaskById(
+    id,
+    {
       title: editTitleElm.value,
       description: editDescElm.value,
       status: editStatusElm.value,
-      createdAt: task.createdAt,
-      updatedAt: new Date().toLocaleString("vi-VN"),
-    };
-    tasks.unshift(editedTask);
-    displayTasks(tasks);
-    localStorage.setItem("todos", JSON.stringify(tasks));
-    editElement.style.display = "none";
-  }
-}
-
-function editTask(id: string) {
-  if (editElement) {
-    const task = tasks.find((task) => task.id === id);
-    renderStatus(editStatusElm);
-    if (task) {
-      setValue(task.id, editIdElm);
-      setValue(task.title, editTitleElm);
-      setValue(task.description, editDescElm);
-      editStatusElm.value = task.status;
-      editElement.style.display = "block";
-    }
-  }
+    },
+    tasks,
+  );
+  displayTasks(tasks);
+  await editTaskInMockAPI(id, {
+    title: editTitleElm.value,
+    description: editDescElm.value,
+    status: editStatusElm.value,
+  });
+  editElement.style.display = "none";
 }
 
 function getInput(field: string): string {
@@ -131,8 +204,38 @@ function getInput(field: string): string {
   return "";
 }
 
-function main() {
-  getTaskListFromLocalStorage();
+function getCurrentTimeString(): string {
+  return new Date().toLocaleString("vi-VN");
+}
+
+function createdTask(title: string, description: string): Task {
+  return {
+    id: (tasks.length + 1).toString(),
+    title,
+    description,
+    status: statusObject[Status.TODO],
+    createdAt: getCurrentTimeString(),
+    updatedAt: getCurrentTimeString(),
+  };
+}
+
+async function addTask(tasks: Task[]) {
+  const title = getInput("title");
+  const description = getInput("description");
+  if (title && description) {
+    const task = createdTask(title, description);
+    tasks.unshift(task);
+    await saveTaskListInMockAPI(task);
+    alert("Added task!");
+    (document.getElementById("add-form") as HTMLFormElement)?.reset();
+    displayTasks(tasks);
+  } else {
+    alert("Please fill in the title and description");
+  }
+}
+
+async function main() {
+  await getTaskListFromMockAPI();
   if (editElement) {
     editElement.style.display = "none";
   }
@@ -140,28 +243,9 @@ function main() {
 
   displayTasks(tasks);
 
-  document.getElementById("add-form")?.addEventListener("submit", () => {
-    const title = getInput("title");
-    const description = getInput("description");
-    if (title && description) {
-      const task: Task = {
-        id: new Date().getTime().toString(),
-        title: title,
-        description: description,
-        status: statusObject[Status.TODO],
-        createdAt: new Date().toLocaleString("vi-VN"),
-        updatedAt: new Date().toLocaleString("vi-VN"),
-      };
-
-      tasks.unshift(task);
-      localStorage.setItem("todos", JSON.stringify(tasks));
-      alert("Added task!");
-      (document.getElementById("add-form") as HTMLFormElement)?.reset();
-      displayTasks(tasks);
-    } else {
-      alert("Please fill in the title and description");
-    }
-  });
+  document
+    .getElementById("add-form")
+    ?.addEventListener("submit", () => addTask(tasks));
 
   if (editForm)
     editForm.addEventListener("submit", () =>
