@@ -23,6 +23,9 @@ interface Task {
 }
 
 const APIUrl = "https://68917047447ff4f11fbc8ceb.mockapi.io/api/v1/tasks";
+const LIMIT = 10;
+let currentPage = 1;
+let totalPages = 1;
 let tasks: Task[] = [];
 const editElement = document.getElementById("edit-task") as HTMLElement;
 const statusElement = document.getElementById("status-filter") as HTMLElement;
@@ -36,6 +39,8 @@ const editDescElm = document.getElementById(
 ) as HTMLInputElement;
 const cancelBtn = document.getElementById("cancel-button") as HTMLButtonElement;
 const editForm = document.getElementById("edit-form") as HTMLFormElement;
+const pagination = document.getElementById("pagination");
+const todoTable = document.getElementById("todolist");
 
 function convertTaskData(tasks: Task[]): Task[] {
   return tasks.map((task) => ({
@@ -44,20 +49,6 @@ function convertTaskData(tasks: Task[]): Task[] {
     createdAt: getCurrentTimeString(),
     updatedAt: getCurrentTimeString(),
   }));
-}
-
-async function getTaskListFromMockAPI() {
-  try {
-    // const response = await axios.get<Task[]>(APIUrl);
-    const response = await fetch(APIUrl);
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const data = await response.json();
-    if (Array.isArray(data)) {
-      tasks = convertTaskData(data);
-    }
-  } catch (error) {
-    console.log("Error: ", error);
-  }
 }
 
 async function saveTaskListInMockAPI(task: Task) {
@@ -74,7 +65,6 @@ async function saveTaskListInMockAPI(task: Task) {
 }
 
 function displayTasks(tasks: Task[]) {
-  const todoTable = document.getElementById("todolist");
   if (todoTable) {
     let rows = "";
     tasks.forEach((task) => {
@@ -93,6 +83,67 @@ function displayTasks(tasks: Task[]) {
     });
     todoTable.innerHTML = rows;
   }
+}
+
+function displayLoading() {
+  if (todoTable) {
+    todoTable.innerHTML = `
+    <tr id="loading-row">
+      <td colspan="8" style="text-align: center;">Loading...</td>
+    </tr>
+  `;
+  }
+}
+
+function displayErrorLoading() {
+  if (todoTable) {
+    todoTable.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; color: red;">Failed to load tasks</td>
+      </tr>
+    `;
+  }
+}
+
+async function getTasksLength() {
+  try {
+    const response = await fetch(APIUrl);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const taskList: Task[] = await response.json();
+    totalPages = Math.ceil(taskList.length / LIMIT);
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+}
+
+async function getTaskListFromMockAPI(page = 1) {
+  displayLoading();
+  try {
+    const response = await fetch(`${APIUrl}?page=${page}&limit=${LIMIT}`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    tasks = convertTaskData(data);
+    displayTasks(tasks);
+    renderPagination();
+  } catch (error) {
+    displayErrorLoading();
+    console.error("Error:", error);
+  }
+}
+
+function renderPagination() {
+  if (!pagination) return;
+
+  let buttons = "";
+  for (let i = 1; i <= totalPages; i++) {
+    buttons += `<button onclick="goToPage(${i})" ${i === currentPage ? "disabled" : ""}>${i}</button>`;
+  }
+  pagination.innerHTML = buttons;
+}
+
+function goToPage(page: number) {
+  currentPage = page;
+  getTaskListFromMockAPI(page);
 }
 
 function renderStatus(elm: HTMLElement) {
@@ -235,6 +286,7 @@ async function addTask(tasks: Task[]) {
 }
 
 async function main() {
+  await getTasksLength();
   await getTaskListFromMockAPI();
   if (editElement) {
     editElement.style.display = "none";
