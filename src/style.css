@@ -39,3 +39,10 @@
 #edit-task input {
   width: 90%;
 }
+
+#pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
