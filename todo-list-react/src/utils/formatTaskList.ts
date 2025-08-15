@@ -6,7 +6,6 @@ import { getCurrentTimeString } from "./formatDate";
 export function convertTaskList(tasks: Task[]): Task[] {
   return tasks.map((task) => ({
     ...task,
-    status: statusObject[Status.TODO],
     createdAt: getCurrentTimeString(),
     updatedAt: getCurrentTimeString(),
   }));

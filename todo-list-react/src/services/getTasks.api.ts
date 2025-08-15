@@ -1,7 +1,7 @@
 import { APIUrl } from "../constants/mockAPI.constant";
 import { convertTaskList } from "../utils/formatTaskList";
 
-export async function getTaskListFromMockAPI(signal: AbortSignal) {
+export async function getTaskListFromMockAPI(signal?: AbortSignal) {
   try {
     const response = await fetch(`${APIUrl}`, {signal});
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);

@@ -1,20 +1,46 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import StatusDropDown from "./StatusDropDown";
 import { filterTasksInMockAPI } from "../services/filterTasks.api";
 import type { Task } from "../types/task.types";
 import Button from "./Button";
 import { Status } from "../types/status.enum";
 import { statusObject } from "../constants/statusObject.constant";
+import { debounce } from "../types/debounce";
+import { getTaskListFromMockAPI } from "../services/getTasks.api";
 
-export default function SearchBar({
-  setTasks,
-  setIsLoading,
-}: {
+type Props = {
   setTasks: Dispatch<SetStateAction<Task[]>>;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
-}) {
+};
+
+export default function SearchBar({ setTasks, setIsLoading }: Props) {
   const [titleFilter, setTitleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>(statusObject[Status.TODO]);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+
+  const debounceFilter = debounce(() => {
+    const fetchTasks = async () => {
+      const taskList = await getTaskListFromMockAPI();
+      if (taskList) {
+        const filteredTasks = taskList.filter(
+          (task) =>
+            task.title.includes(titleFilter) &&
+            (statusFilter !== "" ? task.status === statusFilter : true),
+        );
+        setTasks(filteredTasks);
+      }
+    };
+    fetchTasks();
+  }, 500);
+
+  useEffect(() => {
+    debounceFilter();
+  }, [titleFilter, statusFilter]);
 
   function handleFilter() {
     const filter = async () => {
