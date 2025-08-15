@@ -11,15 +11,17 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchTasks = async () => {
-      const taskList = await getTaskListFromMockAPI();
-      if (taskList) {
+      const taskList = await getTaskListFromMockAPI(controller.signal);
+      if (!controller.signal.aborted && taskList) {
         taskList.reverse();
         setTasks(taskList);
         setIsLoading(false);
       }
     };
     fetchTasks();
+    return () => controller.abort();
   }, []);
 
   return (

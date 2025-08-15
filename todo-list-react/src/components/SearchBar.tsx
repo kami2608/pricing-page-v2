@@ -3,6 +3,8 @@ import StatusDropDown from "./StatusDropDown";
 import { filterTasksInMockAPI } from "../services/filterTasks.api";
 import type { Task } from "../types/task.types";
 import Button from "./Button";
+import { Status } from "../types/status.enum";
+import { statusObject } from "../constants/statusObject.constant";
 
 export default function SearchBar({
   setTasks,
@@ -12,7 +14,7 @@ export default function SearchBar({
   setIsLoading: Dispatch<SetStateAction<boolean>>;
 }) {
   const [titleFilter, setTitleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("TODO");
+  const [statusFilter, setStatusFilter] = useState<string>(statusObject[Status.TODO]);
 
   function handleFilter() {
     const filter = async () => {
