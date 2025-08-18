@@ -1,3 +1,4 @@
+import axios from "axios";
 import { APIUrl } from "../constants/mockAPI.constant";
 
 export async function filterTasksInMockAPI(status: string, title: string) {
@@ -5,12 +6,10 @@ export async function filterTasksInMockAPI(status: string, title: string) {
   if (status) params.append("status", status);
   if (title) params.append("title", title);
   try {
-    const response = await fetch(`${APIUrl}?${params.toString()}`, {
-      method: "GET",
-      headers: { "content-type": "application/json" },
+    const response = await axios.get(`${APIUrl}`, {
+      params: params,
     });
-    if (!response.ok) return [];
-    return await response.json();
+    return response.data;
   } catch (error) {
     console.error(error);
   }

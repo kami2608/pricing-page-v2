@@ -52,3 +52,9 @@
 #edit-task input {
   width: 90%;
 }
+
+.logout {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
