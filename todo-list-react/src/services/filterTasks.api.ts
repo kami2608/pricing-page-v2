@@ -1,12 +1,11 @@
-import axios from "axios";
-import { APIUrl } from "../constants/mockAPI.constant";
+import { instance } from "../constants/axios.constant";
 
 export async function filterTasksInMockAPI(status: string, title: string) {
   const params = new URLSearchParams();
   if (status) params.append("status", status);
   if (title) params.append("title", title);
   try {
-    const response = await axios.get(`${APIUrl}`, {
+    const response = await instance.get(``, {
       params: params,
     });
     return response.data;

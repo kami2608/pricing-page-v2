@@ -1,10 +1,11 @@
-import axios from "axios";
+import { instance } from "../constants/axios.constant";
 
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
+    console.log("Error: ", error);
     return Promise.reject(error);
   },
 );

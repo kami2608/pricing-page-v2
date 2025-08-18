@@ -1,9 +1,8 @@
-import axios from "axios";
-import { APIUrl } from "../constants/mockAPI.constant";
+import { instance } from "../constants/axios.constant";
 
 export async function deleteTaskInMockAPI(id: string) {
   try {
-    const response = await axios.delete(`${APIUrl}/${id}`);
+    const response = await instance.delete(`/${id}`);
     return response.data;
   } catch (error) {
     console.log("Error: ", error);
