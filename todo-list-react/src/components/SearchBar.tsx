@@ -1,7 +1,6 @@
 import {
   useEffect,
   useState,
-  type ChangeEvent,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -9,9 +8,7 @@ import StatusDropDown from "./StatusDropDown";
 import { filterTasksInMockAPI } from "../services/filterTasks.api";
 import type { Task } from "../types/task.types";
 import Button from "./Button";
-import { Status } from "../types/status.enum";
-import { statusObject } from "../constants/statusObject.constant";
-import { debounce } from "../types/debounce";
+import { debounce } from "../utils/debounce";
 import { getTaskListFromMockAPI } from "../services/getTasks.api";
 
 type Props = {
@@ -21,7 +18,7 @@ type Props = {
 
 export default function SearchBar({ setTasks, setIsLoading }: Props) {
   const [titleFilter, setTitleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const debounceFilter = debounce(() => {
     const fetchTasks = async () => {

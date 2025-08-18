@@ -1,17 +1,16 @@
+import axios from "axios";
 import { APIUrl } from "../constants/mockAPI.constant";
 import type { Task } from "../types/task.types";
 
 export async function saveTaskInMockAPI(task: Task) {
   try {
-    const response = await fetch(APIUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(task),
+    const response = await axios.post(`${APIUrl}`, task, {
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+    return response.data;
   } catch (error) {
     console.log("Error: ", error);
-    throw error;
   }
 }
