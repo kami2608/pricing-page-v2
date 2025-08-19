@@ -1,7 +1,7 @@
 import axios from "axios"
 import { APIUrl } from "./mockAPI.constant"
 
-export const instance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: APIUrl,
     allowAbsoluteUrls: false,
 })

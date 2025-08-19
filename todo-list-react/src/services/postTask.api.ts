@@ -1,9 +1,9 @@
 import type { Task } from "../types/task.types";
-import { instance } from "../constants/axios.constant";
+import { axiosInstance } from "../constants/axios.constant";
 
 export async function saveTaskInMockAPI(task: Task) {
   try {
-    const response = await instance.post(``, task, {
+    const response = await axiosInstance.post(`tasks`, task, {
       headers: {
         "Content-Type": "application/json",
       },

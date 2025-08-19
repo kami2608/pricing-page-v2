@@ -1,6 +1,17 @@
-import { instance } from "../constants/axios.constant";
+import { axiosInstance } from "../constants/axios.constant";
 
-instance.interceptors.response.use(
+axiosInstance.interceptors.request.use(
+  (config) => {
+    config.headers["Content-Type"] = "application/json";
+    return config;
+  },
+  (error) => {
+    console.log("Error: ", error);
+    return Promise.reject(error);
+  },
+);
+
+axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },

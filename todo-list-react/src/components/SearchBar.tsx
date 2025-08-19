@@ -18,11 +18,12 @@ type Props = {
 
 export default function SearchBar({ setTasks, setIsLoading }: Props) {
   const [titleFilter, setTitleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("")
 
+  const controller = new AbortController();
   const debounceFilter = debounce(() => {
     const fetchTasks = async () => {
-      const taskList = await getTaskListFromMockAPI();
+      const taskList = await getTaskListFromMockAPI(controller.signal);
       if (taskList) {
         const filteredTasks = taskList.filter(
           (task) =>
@@ -37,6 +38,7 @@ export default function SearchBar({ setTasks, setIsLoading }: Props) {
 
   useEffect(() => {
     debounceFilter();
+    return () => controller.abort();
   }, [titleFilter, statusFilter]);
 
   function handleFilter() {
