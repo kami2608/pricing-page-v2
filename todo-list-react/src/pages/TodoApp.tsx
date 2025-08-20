@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Button from "./components/Button";
-import type { Task } from "./types/task.types";
-import { getTaskListFromMockAPI } from "./services/getTasks.api";
-import TaskInput from "./components/TaskInput";
-import SearchBar from "./components/SearchBar";
-import TaskTable from "./components/TaskTable";
+import Button from "../components/Button";
+import type { Task } from "../types/task.types";
+import { getTaskListFromMockAPI } from "../services/getTasks.api";
+import TaskInput from "../components/TaskInput";
+import SearchBar from "../components/SearchBar";
+import TaskTable from "../components/TaskTable";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function TodoApp() {
