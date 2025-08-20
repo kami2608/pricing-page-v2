@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import Button from "./components/Button";
-import type { Task } from "./types/task.types";
-import { getTaskListFromMockAPI } from "./services/getTasks.api";
-import TaskInput from "./components/TaskInput";
-import SearchBar from "./components/SearchBar";
-import TaskTable from "./components/TaskTable";
+import { lazy, useEffect, useState } from "react";
+import Button from "../components/Button";
+import type { Task } from "../types/task.types";
+import { getTaskListFromMockAPI } from "../services/getTasks.api";
+import TaskInput from "../components/TaskInput";
+import SearchBar from "../components/SearchBar";
+import TaskTable from "../components/TaskTable";
 import { useAuth0 } from "@auth0/auth0-react";
+import AuthRoute from "./AuthRoute";
 
 export default function TodoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -86,6 +87,7 @@ export default function TodoApp() {
   }, []);
   return (
     <>
+      <AuthRoute />
       <h1 style={{ textAlign: "center" }}>
         Welcome to Todo App, {user?.nickname}
       </h1>
@@ -98,3 +100,5 @@ export default function TodoApp() {
     </>
   );
 }
+
+

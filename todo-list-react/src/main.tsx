@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
 import { Auth0Provider } from "@auth0/auth0-react";
+import App from "./App.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,10 +14,10 @@ createRoot(document.getElementById("root")!).render(
         audience:import.meta.env.VITE_AUTH0_AUDIENCE,
         scope: "openid profile email offline_access",
       }}
-      // cacheLocation="localstorage"
+      cacheLocation="localstorage"
       useRefreshTokens={true}
     >
-      <App />
+      <App/>
     </Auth0Provider>
   </StrictMode>,
 );
