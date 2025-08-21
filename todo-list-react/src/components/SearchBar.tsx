@@ -1,15 +1,16 @@
 import {
+  useCallback,
   useEffect,
   useState,
+  type ChangeEvent,
   type Dispatch,
   type SetStateAction,
 } from "react";
 import StatusDropDown from "./StatusDropDown";
-import { filterTasksInMockAPI } from "../services/filterTasks.api";
 import type { Task } from "../types/task.types";
-import Button from "./Button";
 import { debounce } from "../utils/debounce";
 import { getTaskListFromMockAPI } from "../services/getTasks.api";
+import { useSearchParams } from "react-router-dom";
 
 type Props = {
   setTasks: Dispatch<SetStateAction<Task[]>>;
@@ -18,19 +19,24 @@ type Props = {
 
 export default function SearchBar({ setTasks, setIsLoading }: Props) {
   const [titleFilter, setTitleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("")
+  const [statusFilter, setStatusFilter] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const controller = new AbortController();
   const debounceFilter = debounce(() => {
+    setStatusFilter(searchParams.get("status") ?? "");
+    setTitleFilter(searchParams.get("title") ?? "");
+    setIsLoading(true);
     const fetchTasks = async () => {
       const taskList = await getTaskListFromMockAPI(controller.signal);
       if (taskList) {
         const filteredTasks = taskList.filter(
           (task) =>
-            task.title.includes(titleFilter) &&
-            (statusFilter !== "" ? task.status === statusFilter : true),
+            task.title.includes(searchParams.get("title") ?? "") &&
+            task.status.includes(searchParams.get("status") ?? ""),
         );
         setTasks(filteredTasks);
+        setIsLoading(false);
       }
     };
     fetchTasks();
@@ -39,18 +45,23 @@ export default function SearchBar({ setTasks, setIsLoading }: Props) {
   useEffect(() => {
     debounceFilter();
     return () => controller.abort();
-  }, [titleFilter, statusFilter]);
+  }, [searchParams]);
 
-  function handleFilter() {
-    const filter = async () => {
-      setIsLoading(true);
-      const response = await filterTasksInMockAPI(statusFilter, titleFilter);
-      if (response) {
-        setTasks(response);
-        setIsLoading(false);
-      }
-    };
-    filter();
+  const updateTitleParams = useCallback(
+    debounce((e: string) => {
+      setSearchParams({ title: e });
+    }, 500),
+    [],
+  );
+
+  function handleChangeTitle(e: ChangeEvent<HTMLInputElement>) {
+    setTitleFilter(e.target.value);
+    updateTitleParams(e.target.value);
+  }
+
+  function handleChangeStatus(e: string) {
+    setStatusFilter(e);
+    setSearchParams({ status: e });
   }
 
   return (
@@ -63,16 +74,16 @@ export default function SearchBar({ setTasks, setIsLoading }: Props) {
             type="text"
             id="title-filter"
             value={titleFilter}
-            onChange={(e) => setTitleFilter(e.target.value)}
+            onChange={(e) => handleChangeTitle(e)}
           />
         </label>
         <label>
           <StatusDropDown
             defaulValue={statusFilter}
-            handleChange={(e) => setStatusFilter(e)}
+            handleChange={(e) => handleChangeStatus(e)}
           />
         </label>
-        <Button title="Filter" handleClick={handleFilter} />
+        {/* <Button title="Filter" handleClick={handleFilter} /> */}
       </section>
     </>
   );
