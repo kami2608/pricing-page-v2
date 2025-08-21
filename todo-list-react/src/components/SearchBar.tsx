@@ -10,7 +10,7 @@ import StatusDropDown from "./StatusDropDown";
 import type { Task } from "../types/task.types";
 import { debounce } from "../utils/debounce";
 import { getTaskListFromMockAPI } from "../services/getTasks.api";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
   setTasks: Dispatch<SetStateAction<Task[]>>;
@@ -20,36 +20,42 @@ type Props = {
 export default function SearchBar({ setTasks, setIsLoading }: Props) {
   const [titleFilter, setTitleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const controller = new AbortController();
+
   const debounceFilter = debounce(() => {
-    setStatusFilter(searchParams.get("status") ?? "");
-    setTitleFilter(searchParams.get("title") ?? "");
-    setIsLoading(true);
+    const params = new URLSearchParams(window.location.search);
+    setStatusFilter(params.get("status") ?? "");
+    setTitleFilter(params.get("title") ?? "");
     const fetchTasks = async () => {
       const taskList = await getTaskListFromMockAPI(controller.signal);
       if (taskList) {
         const filteredTasks = taskList.filter(
           (task) =>
-            task.title.includes(searchParams.get("title") ?? "") &&
-            task.status.includes(searchParams.get("status") ?? ""),
+            task.title.includes(params.get("title") ?? "") &&
+            task.status.includes(params.get("status") ?? ""),
         );
         setTasks(filteredTasks);
-        setIsLoading(false);
       }
     };
     fetchTasks();
   }, 500);
 
   useEffect(() => {
+    console.log("effect");
     debounceFilter();
     return () => controller.abort();
-  }, [searchParams]);
+  }, [location.search]);
 
   const updateTitleParams = useCallback(
     debounce((e: string) => {
-      setSearchParams({ title: e });
+      if (e) {
+        const params = new URLSearchParams(window.location.search);
+        params.set("title", e);
+        navigate("?" + params.toString(), { replace: false });
+      }
     }, 500),
     [],
   );
@@ -61,7 +67,9 @@ export default function SearchBar({ setTasks, setIsLoading }: Props) {
 
   function handleChangeStatus(e: string) {
     setStatusFilter(e);
-    setSearchParams({ status: e });
+    const params = new URLSearchParams(window.location.search);
+    params.set("status", e);
+    navigate("?" + params.toString(), { replace: false });
   }
 
   return (
@@ -83,7 +91,6 @@ export default function SearchBar({ setTasks, setIsLoading }: Props) {
             handleChange={(e) => handleChangeStatus(e)}
           />
         </label>
-        {/* <Button title="Filter" handleClick={handleFilter} /> */}
       </section>
     </>
   );
