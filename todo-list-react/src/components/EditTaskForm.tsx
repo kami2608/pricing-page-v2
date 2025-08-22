@@ -1,11 +1,12 @@
-import {  type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Button from "./Button";
 import type { Task } from "../types/task.types";
 import { getCurrentTimeString } from "../utils/formatDate";
 import { editTaskInMockAPI } from "../services/editTask.api";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { statusObject } from "../constants/statusObject.constant";
 import type { Status } from "../types/status.enum";
+import DisplayError from "./DisplayError";
 
 type Props = {
   task: Task;
@@ -18,8 +19,7 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-    getValues
-  } = useForm({
+  } = useForm<Partial<Task>>({
     defaultValues: {
       title: task.title,
       description: task.description,
@@ -28,30 +28,25 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
     mode: "onChange",
   });
 
-  function onSubmit() {
-    const editTask = async () => {
-      const editedTask: Partial<Task> = {
-        title: getValues("title"),
-        description: getValues("description"),
-        status: getValues("status"),
-        updatedAt: getCurrentTimeString(),
-      };
-      const response = await editTaskInMockAPI(task.id, editedTask);
-      if (response) {
-        alert("Task updated successfully!");
-        setTasks((prevTasks) => {
-          return prevTasks.map((t) =>
-            t.id === task.id ? { ...t, ...editedTask } : t,
-          );
-        });
-        setIsEditing(false);
-      } else {
-        alert("Failed to update task. Please try again.");
-      }
+  const onSubmit: SubmitHandler<Partial<Task>> = async (editedTask) => {
+    editedTask = {
+      ...editedTask,
+      updatedAt: getCurrentTimeString(),
     };
-    editTask();
-    setIsEditing(false);
-  }
+    const response = await editTaskInMockAPI(task.id, editedTask);
+    if (response) {
+      alert("Task updated successfully!");
+      setTasks((prevTasks) => {
+        return prevTasks.map((t) =>
+          t.id === task.id ? { ...t, ...editedTask } : t,
+        );
+      });
+      setIsEditing(false);
+    } else {
+      alert("Failed to update task. Please try again.");
+    }
+  };
+
   function handleCancel() {
     setIsEditing(false);
   }
@@ -82,12 +77,7 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
             })}
           />
           <br />
-          {errors.title && (
-            <>
-              <p style={{ color: "red" }}>{errors.title.message}</p>
-              <br />
-            </>
-          )}
+          <DisplayError error={errors.title} />
           <label>Description: </label>
           <br />
           <input
@@ -100,12 +90,7 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
             })}
           />
           <br />
-          {errors.description && (
-            <>
-              <p style={{ color: "red" }}>{errors.description.message}</p>
-              <br />
-            </>
-          )}
+          <DisplayError error={errors.description} />
           <br />
           <label>
             Status:

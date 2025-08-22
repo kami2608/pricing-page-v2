@@ -3,15 +3,16 @@ import Button from "./Button";
 import { createdTask } from "../utils/createNewTask";
 import { saveTaskInMockAPI } from "../services/postTask.api";
 import type { Task } from "../types/task.types";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { fieldRules } from "../utils/fieldRules";
+import DisplayError from "./DisplayError";
 
 export default function TaskInput({
   setTasks,
 }: {
   setTasks: Dispatch<SetStateAction<Task[]>>;
 }) {
-  const { register, handleSubmit, reset, formState: {errors}, getValues } = useForm({
+  const { register, handleSubmit, reset, formState: {errors}} = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -19,10 +20,9 @@ export default function TaskInput({
     mode: "onChange",
   });
 
-  function onSubmit() {
-    const newTask = createdTask(getValues("title"), getValues("description"));
-    const saveTask = async () => {
-      const response = await saveTaskInMockAPI(newTask);
+  const onSubmit: SubmitHandler<Partial<Task>> = async (data) => {
+    const newTask = createdTask(data);
+    const response = await saveTaskInMockAPI(newTask);
       if (response) {
         reset();
         alert("Task added successfully!");
@@ -30,8 +30,6 @@ export default function TaskInput({
       } else {
         alert("Failed to add task. Please try again.");
       }
-    };
-    saveTask();
   }
 
   return (
@@ -53,12 +51,7 @@ export default function TaskInput({
             })}
           />
           <br />
-          {errors.title && (
-            <>
-              <p style={{ color: "red" }}>{errors.title.message}</p>
-              <br />
-            </>
-          )}
+          <DisplayError error={errors.title}/>
           <label>Description: </label>
           <br />
           <input
@@ -72,12 +65,7 @@ export default function TaskInput({
             })}
           />
           <br />
-          {errors.description && (
-            <>
-              <p style={{ color: "red" }}>{errors.description.message}</p>
-              <br />
-            </>
-          )}
+          <DisplayError error={errors.description}/>
           <br />
           <Button title="Add"/>
           <br />
