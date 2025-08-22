@@ -122,7 +122,7 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
           </label>
           <br />
           <br />
-          <Button title="Submit" handleClick={handleSubmit(onSubmit)} />
+          <Button title="Submit" />
           <Button title="Cancel" handleClick={handleCancel} />
         </form>
       </section>

@@ -3,7 +3,7 @@ import Button from "./Button";
 import { createdTask } from "../utils/createNewTask";
 import { saveTaskInMockAPI } from "../services/postTask.api";
 import type { Task } from "../types/task.types";
-import { get, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { fieldRules } from "../utils/fieldRules";
 
 export default function TaskInput({
@@ -79,7 +79,7 @@ export default function TaskInput({
             </>
           )}
           <br />
-          <Button title="Add" handleClick={handleSubmit(onSubmit)}/>
+          <Button title="Add"/>
           <br />
         </form>
       </div>
