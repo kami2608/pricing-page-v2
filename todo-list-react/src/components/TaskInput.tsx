@@ -1,67 +1,73 @@
-import {
-  useState,
-  type Dispatch,
-  type FormEvent,
-  type SetStateAction,
-} from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import Button from "./Button";
 import { createdTask } from "../utils/createNewTask";
 import { saveTaskInMockAPI } from "../services/postTask.api";
 import type { Task } from "../types/task.types";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { fieldRules } from "../utils/fieldRules";
+import DisplayError from "./DisplayError";
 
 export default function TaskInput({
   setTasks,
 }: {
   setTasks: Dispatch<SetStateAction<Task[]>>;
 }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const { register, handleSubmit, reset, formState: {errors}} = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+    },
+    mode: "onChange",
+  });
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    e.stopPropagation();
-    const newTask = createdTask(title, description);
-    const saveTask = async () => {
-      const response = await saveTaskInMockAPI(newTask);
+  const onSubmit: SubmitHandler<Partial<Task>> = async (data) => {
+    const newTask = createdTask(data);
+    const response = await saveTaskInMockAPI(newTask);
       if (response) {
-        setTitle("");
-        setDescription("");
+        reset();
         alert("Task added successfully!");
         setTasks((prevTasks) => [response, ...prevTasks]);
       } else {
         alert("Failed to add task. Please try again.");
       }
-    };
-    saveTask();
   }
 
   return (
     <>
       <div className="add-task">
         <h2>Add Task</h2>
-        <form action="#" id="add-form" onSubmit={handleSubmit}>
+        <form id="add-form" onSubmit={handleSubmit(onSubmit)}>
           <label>Title: </label>
           <br />
           <input
-            type="text"
             id="title"
-            required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            {...register("title", {
+              required: true,
+              minLength: {
+                value: 3,
+                message: "Title must be at least 3 chars",
+              },
+              validate: fieldRules,
+            })}
           />
           <br />
+          <DisplayError error={errors.title}/>
           <label>Description: </label>
           <br />
           <input
-            type="text"
             id="description"
-            required
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("description", {
+              required: true,
+              minLength: {
+                value: 5,
+                message: "Description must be at least 5 chars",
+              },
+            })}
           />
           <br />
+          <DisplayError error={errors.description}/>
           <br />
-          <Button title="Add" />
+          <Button title="Add"/>
           <br />
         </form>
       </div>
