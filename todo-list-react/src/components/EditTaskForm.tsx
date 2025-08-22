@@ -18,7 +18,7 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
+    getValues
   } = useForm({
     defaultValues: {
       title: task.title,
@@ -31,9 +31,9 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
   function onSubmit() {
     const editTask = async () => {
       const editedTask: Partial<Task> = {
-        title: watch("title"),
-        description: watch("description"),
-        status: watch("status"),
+        title: getValues("title"),
+        description: getValues("description"),
+        status: getValues("status"),
         updatedAt: getCurrentTimeString(),
       };
       const response = await editTaskInMockAPI(task.id, editedTask);

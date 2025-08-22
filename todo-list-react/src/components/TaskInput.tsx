@@ -3,7 +3,7 @@ import Button from "./Button";
 import { createdTask } from "../utils/createNewTask";
 import { saveTaskInMockAPI } from "../services/postTask.api";
 import type { Task } from "../types/task.types";
-import { useForm } from "react-hook-form";
+import { get, useForm } from "react-hook-form";
 import { fieldRules } from "../utils/fieldRules";
 
 export default function TaskInput({
@@ -11,7 +11,7 @@ export default function TaskInput({
 }: {
   setTasks: Dispatch<SetStateAction<Task[]>>;
 }) {
-  const { register, handleSubmit, watch, reset, formState: {errors} } = useForm({
+  const { register, handleSubmit, reset, formState: {errors}, getValues } = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -20,7 +20,7 @@ export default function TaskInput({
   });
 
   function onSubmit() {
-    const newTask = createdTask(watch("title"), watch("description"));
+    const newTask = createdTask(getValues("title"), getValues("description"));
     const saveTask = async () => {
       const response = await saveTaskInMockAPI(newTask);
       if (response) {
