@@ -1,9 +1,11 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import {  type Dispatch, type SetStateAction } from "react";
 import Button from "./Button";
-import StatusDropDown from "./StatusDropDown";
 import type { Task } from "../types/task.types";
 import { getCurrentTimeString } from "../utils/formatDate";
 import { editTaskInMockAPI } from "../services/editTask.api";
+import { useForm } from "react-hook-form";
+import { statusObject } from "../constants/statusObject.constant";
+import type { Status } from "../types/status.enum";
 
 type Props = {
   task: Task;
@@ -12,16 +14,26 @@ type Props = {
 };
 
 export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
-  const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description);
-  const [status, setStatus] = useState(task.status);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm({
+    defaultValues: {
+      title: task.title,
+      description: task.description,
+      status: task.status,
+    },
+    mode: "onChange",
+  });
 
-  function handleSubmit() {
+  function onSubmit() {
     const editTask = async () => {
       const editedTask: Partial<Task> = {
-        title: title,
-        description: description,
-        status: status,
+        title: watch("title"),
+        description: watch("description"),
+        status: watch("status"),
         updatedAt: getCurrentTimeString(),
       };
       const response = await editTaskInMockAPI(task.id, editedTask);
@@ -47,7 +59,7 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
     <>
       <section id="edit-task">
         <h3>Edit task</h3>
-        <form action="#" id="edit-form">
+        <form onSubmit={handleSubmit(onSubmit)} id="edit-form">
           <label>ID:</label>
           <br />
           <input
@@ -61,31 +73,56 @@ export default function EditTaskForm({ task, setIsEditing, setTasks }: Props) {
           <label>Title: </label>
           <br />
           <input
-            type="text"
             id="edit-title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            {...register("title", {
+              minLength: {
+                value: 3,
+                message: "Title must be at least 3 chars",
+              },
+            })}
           />
           <br />
+          {errors.title && (
+            <>
+              <p style={{ color: "red" }}>{errors.title.message}</p>
+              <br />
+            </>
+          )}
           <label>Description: </label>
           <br />
           <input
-            type="text"
             id="edit-description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register("description", {
+              minLength: {
+                value: 5,
+                message: "Description must be at least 5 chars",
+              },
+            })}
           />
           <br />
+          {errors.description && (
+            <>
+              <p style={{ color: "red" }}>{errors.description.message}</p>
+              <br />
+            </>
+          )}
           <br />
           <label>
-            <StatusDropDown
-              defaulValue={status}
-              handleChange={(e) => setStatus(e)}
-            />
+            Status:
+            <select id="status" {...register("status")}>
+              {Object.keys(statusObject).map((key) => {
+                const status = statusObject[key as Status];
+                return status ? (
+                  <option key={key} value={status}>
+                    {status}
+                  </option>
+                ) : null;
+              })}
+            </select>
           </label>
           <br />
           <br />
-          <Button title="Submit" handleClick={handleSubmit} />
+          <Button title="Submit" handleClick={handleSubmit(onSubmit)} />
           <Button title="Cancel" handleClick={handleCancel} />
         </form>
       </section>
